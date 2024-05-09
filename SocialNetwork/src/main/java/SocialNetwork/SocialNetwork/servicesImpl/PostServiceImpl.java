@@ -45,15 +45,22 @@ public class PostServiceImpl implements PostService {
         return true;
     }
     @Override
-    public List<PostServiceModel> getAllPosts(String timelineUserId) {
-        return null;
+    public List<PostServiceModel> getAllPosts(Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return new ArrayList<>();
+        }
+        List<Post> postList = postRepository.findAllByUser(user);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Post post : postList) {
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
+        return postServiceModels;
     }
 
     @Override
     public boolean deletePost(Integer userId, Integer PostId) throws CustomException {
-        if (userId == null || PostId == null) {
-            throw new CustomException("userId or PostId not exists");
-        }
         User userPost = userRepository.findById(userId).orElse(null);
         Post PostToRemove = postRepository.findById(PostId).orElse(null);
 
@@ -65,5 +72,17 @@ public class PostServiceImpl implements PostService {
         }
         postRepository.delete(PostToRemove);
         return true;
+    }
+
+    @Override
+    public PostServiceModel getSinglePost(Integer userId, Integer postId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Post post = postRepository.findById(postId).orElse(null);
+
+        if (user == null || post == null) {
+            throw new CustomException("userId or PostId not found");
+        }
+        PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+        return postServiceModel;
     }
 }

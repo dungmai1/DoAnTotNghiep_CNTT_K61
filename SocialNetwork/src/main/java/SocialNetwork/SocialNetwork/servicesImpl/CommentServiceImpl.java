@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public int getAllCommentsForPost(Integer PostID) {
+    public int CountAllCommentsForPost(Integer PostID) {
         Post post = postRepository.findById(PostID).orElse(null);
         if(post == null){
             throw new CustomException("PostId not found");
@@ -70,5 +70,15 @@ public class CommentServiceImpl implements CommentService {
         }
         Comment comment = commentRepository.findByUserAndPostAndAndId(user,post,commentId);
         commentRepository.delete(comment);
+    }
+
+    @Override
+    public List<Comment> getAllCommentForPost(Integer PostID) {
+        Post post = postRepository.findById(PostID).orElse(null);
+        if(post == null) {
+            throw new CustomException("userId or PostId not found");
+        }
+        List<Comment> commentList = commentRepository.findAllByPost(post);
+        return commentList;
     }
 }

@@ -25,7 +25,7 @@ public class LikeController {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/AllLikeForPost")
+    @GetMapping("/CountAllLikeForPost")
     public ResponseEntity allLikeForPost(Integer postId) {
         try {
             Integer countLike = likeService.getAllLikesForPost(postId);
