@@ -8,6 +8,4 @@ import lombok.Data;
 public class PostCreateBindingModel {
     private String content;
     private String ImageUrl;
-    @JsonIgnoreProperties({"displayName", "userName", "password", "email"})
-    private User user;
 }

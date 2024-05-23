@@ -4,6 +4,7 @@ import SocialNetwork.SocialNetwork.common.ApiResponse;
 import SocialNetwork.SocialNetwork.domain.entities.User;
 import SocialNetwork.SocialNetwork.exception.CustomException;
 import SocialNetwork.SocialNetwork.services.LikeService;
+import SocialNetwork.SocialNetwork.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +17,34 @@ import java.util.List;
 public class LikeController {
     @Autowired
     private LikeService likeService;
+    @Autowired
+    private UserService userService;
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addLike(Integer userId, Integer PostId){
+    public ResponseEntity<ApiResponse> addLike(@RequestHeader("Authorization") String jwt,
+                                               Integer PostId){
         try{
-            likeService.addLike(PostId,userId);
+            User user = userService.findUserByJwt(jwt);
+            likeService.addLike(PostId,user);
             return new ResponseEntity<>(new ApiResponse(true,"Like success"), HttpStatus.CREATED);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/CountAllLikeForPost")
-    public ResponseEntity allLikeForPost(Integer postId) {
+    public ResponseEntity allLikeForPost(Integer PostId) {
         try {
-            Integer countLike = likeService.getAllLikesForPost(postId);
+            Integer countLike = likeService.getAllLikesForPost(PostId);
             return ResponseEntity.ok(countLike);
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @DeleteMapping("/UnLike")
-    public ResponseEntity UnLike(Integer userId, Integer PostId){
+    public ResponseEntity UnLike(@RequestHeader("Authorization") String jwt,
+                                 Integer PostId){
         try{
-            likeService.unlike(PostId,userId);
+            User user = userService.findUserByJwt(jwt);
+            likeService.unlike(PostId,user);
             return new ResponseEntity<>(new ApiResponse(true,"UnLike Success"),HttpStatus.BAD_REQUEST);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(false,"UnLike Fail"),HttpStatus.BAD_REQUEST);

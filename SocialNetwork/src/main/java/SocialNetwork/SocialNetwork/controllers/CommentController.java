@@ -6,6 +6,7 @@ import SocialNetwork.SocialNetwork.domain.entities.User;
 import SocialNetwork.SocialNetwork.domain.models.bindingModels.CommentCreateBindingModel;
 import SocialNetwork.SocialNetwork.exception.CustomException;
 import SocialNetwork.SocialNetwork.services.CommentService;
+import SocialNetwork.SocialNetwork.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,14 @@ import java.util.List;
 public class CommentController {
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private UserService userService;
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createComment(@RequestBody CommentCreateBindingModel commentCreateBindingModel){
+    public ResponseEntity<ApiResponse> createComment(@RequestBody CommentCreateBindingModel commentCreateBindingModel,
+                                                     @RequestHeader("Authorization") String jwt){
         try{
-            commentService.addComment(commentCreateBindingModel);
+            User user = userService.findUserByJwt(jwt);
+            commentService.addComment(commentCreateBindingModel,user);
             return new ResponseEntity<>(new ApiResponse(true,"Add Comment Success"), HttpStatus.CREATED);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(true,e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -37,9 +42,11 @@ public class CommentController {
         }
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deleteComment(Integer UserId, Integer PostId, Integer CommentId) {
+    public ResponseEntity<ApiResponse> deleteComment(@RequestHeader("Authorization") String jwt,
+                                                     Integer PostId, Integer CommentId) {
         try{
-            commentService.deleteComment(UserId,PostId,CommentId);
+            User user = userService.findUserByJwt(jwt);
+            commentService.deleteComment(user,PostId,CommentId);
             return new ResponseEntity<>(new ApiResponse(true,"Delete Comment Success"), HttpStatus.OK);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(true,e.getMessage()), HttpStatus.BAD_REQUEST);

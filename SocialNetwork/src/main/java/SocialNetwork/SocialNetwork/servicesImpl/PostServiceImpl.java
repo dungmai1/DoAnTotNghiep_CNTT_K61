@@ -32,9 +32,9 @@ public class PostServiceImpl implements PostService {
         this.modelMapper = modelMapper;
     }
     @Override
-    public boolean createPost(PostCreateBindingModel postCreateBindingModel) {
+    public boolean createPost(PostCreateBindingModel postCreateBindingModel, User user) {
         PostServiceModel postServiceModel = new PostServiceModel();
-        postServiceModel.setUser(postCreateBindingModel.getUser());
+        postServiceModel.setUser(user);
         postServiceModel.setContent(postCreateBindingModel.getContent());
         postServiceModel.setImageUrl(postCreateBindingModel.getImageUrl());
         postServiceModel.setPostTime(LocalDateTime.now());
@@ -45,11 +45,7 @@ public class PostServiceImpl implements PostService {
         return true;
     }
     @Override
-    public List<PostServiceModel> getAllPosts(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return new ArrayList<>();
-        }
+    public List<PostServiceModel> getAllPostsByUser(User user) {
         List<Post> postList = postRepository.findAllByUser(user);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Post post : postList) {
@@ -60,28 +56,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean deletePost(Integer userId, Integer PostId) throws CustomException {
-        User userPost = userRepository.findById(userId).orElse(null);
+    public boolean deletePost(User user, Integer PostId) throws CustomException {
         Post PostToRemove = postRepository.findById(PostId).orElse(null);
-
-        if (userPost == null || PostToRemove == null) {
-            throw new CustomException("userId or PostId not found");
-        }
-        if (!userPost.getId().equals(PostToRemove.getUser().getId())) {
-            throw new CustomException("This user is not the poster");
-        }
         postRepository.delete(PostToRemove);
         return true;
     }
 
     @Override
-    public PostServiceModel getSinglePost(Integer userId, Integer postId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public PostServiceModel getSinglePost(User user,Integer postId) {
         Post post = postRepository.findById(postId).orElse(null);
-
-        if (user == null || post == null) {
-            throw new CustomException("userId or PostId not found");
-        }
         PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
         return postServiceModel;
     }

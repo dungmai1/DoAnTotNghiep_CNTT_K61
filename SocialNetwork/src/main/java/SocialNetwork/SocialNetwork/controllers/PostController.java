@@ -23,27 +23,39 @@ public class PostController {
     @Autowired
     private UserService userService;
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createPost(@RequestBody PostCreateBindingModel postCreateBindingModel) {
-        postService.createPost(postCreateBindingModel);
-        return new ResponseEntity<>(new ApiResponse(true, "Post has been created"), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> createPost(@RequestBody PostCreateBindingModel postCreateBindingModel,
+                                                  @RequestHeader("Authorization") String jwt) {
+        try{
+            User user = userService.findUserByJwt(jwt);
+            postService.createPost(postCreateBindingModel,user);
+            return new ResponseEntity<>(new ApiResponse(true, "Post has been created"), HttpStatus.CREATED);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deletePost(Integer userId, Integer PostId){
+    public ResponseEntity<ApiResponse> deletePost(@RequestHeader("Authorization") String jwt,
+                                                  Integer PostId){
         try{
-            postService.deletePost(userId,PostId);
+            User user = userService.findUserByJwt(jwt);
+            postService.deletePost(user,PostId);
             return new ResponseEntity<>(new ApiResponse(true, "Delete Post success"), HttpStatus.OK);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/GetAllPost")
-    public List<PostServiceModel> getAllPost(Integer UserId){
-        List<PostServiceModel> postServiceModelList = postService.getAllPosts(UserId);
+    @GetMapping("/GetAllPostByUser")
+    public List<PostServiceModel> getAllPost(@RequestHeader("Authorization") String jwt){
+        User user = userService.findUserByJwt(jwt);
+        List<PostServiceModel> postServiceModelList = postService.getAllPostsByUser(user);
         return postServiceModelList;
     }
     @GetMapping("/GetSinglePost")
-    public PostServiceModel getSinglePost(Integer UserId, Integer PostId){
-        PostServiceModel postServiceModel = postService.getSinglePost(UserId,PostId);
+    public PostServiceModel getSinglePost(@RequestHeader("Authorization") String jwt,
+                                          Integer PostId){
+        User user = userService.findUserByJwt(jwt);
+        PostServiceModel postServiceModel = postService.getSinglePost(user,PostId);
         return postServiceModel;
     }
+
 }

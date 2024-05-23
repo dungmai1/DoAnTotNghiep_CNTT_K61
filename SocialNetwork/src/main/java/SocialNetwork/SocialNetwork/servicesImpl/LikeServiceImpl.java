@@ -26,18 +26,18 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public boolean addLike(Integer postId, Integer userId) throws CustomException {
-        User user = userRepository.findById(userId).orElse(null);
+    public boolean addLike(Integer postId, User user) throws CustomException {
         Post post = postRepository.findById(postId).orElse(null);
-
-        if (user == null || post == null) {
-            throw new CustomException("userId or PostId not found");
+        if ( post == null) {
+            throw new CustomException("PostId not found");
         }
         Like like = new Like();
         like.setUser(user);
         like.setPost(post);
         like.setCount(1L);
+        post.getLikeList().add(like);
         likeRepository.save(like);
+        postRepository.save(post);
         return true;
     }
 
@@ -51,8 +51,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public boolean unlike(Integer postId, Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public boolean unlike(Integer postId,  User user) {
         Post post = postRepository.findById(postId).orElse(null);
         Like likeByUserAndPost = likeRepository.findByUserAndPost(user, post);
         if (likeByUserAndPost != null) {

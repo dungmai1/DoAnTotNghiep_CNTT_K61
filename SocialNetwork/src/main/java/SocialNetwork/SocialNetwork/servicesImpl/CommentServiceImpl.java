@@ -32,11 +32,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean addComment(CommentCreateBindingModel commentCreateBindingModel) {
-        User user = userRepository.findById(commentCreateBindingModel.getUser().getId()).orElse(null);
+    public boolean addComment(CommentCreateBindingModel commentCreateBindingModel, User user) {
         Post post = postRepository.findById(commentCreateBindingModel.getPost().getId()).orElse(null);
-
-        if(user == null || post == null) {
+        if(post == null) {
             throw new CustomException("userId or PostId not found");
         }
         CommentServiceModel commentServiceModel = new CommentServiceModel();
@@ -46,6 +44,8 @@ public class CommentServiceImpl implements CommentService {
         commentServiceModel.setImageUrl(commentServiceModel.getImageUrl());
         commentServiceModel.setContent(commentServiceModel.getContent());
         Comment comment = this.modelMapper.map(commentServiceModel, Comment.class);
+        post.getCommentList().add(comment);
+        postRepository.save(post);
         commentRepository.save(comment);
         return true;
     }
@@ -61,11 +61,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Integer userId, Integer postId, Integer commentId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public void deleteComment(User user, Integer postId, Integer commentId) {
         Post post = postRepository.findById(postId).orElse(null);
-
-        if(user == null || post == null) {
+        if( post == null) {
             throw new CustomException("userId or PostId not found");
         }
         Comment comment = commentRepository.findByUserAndPostAndAndId(user,post,commentId);

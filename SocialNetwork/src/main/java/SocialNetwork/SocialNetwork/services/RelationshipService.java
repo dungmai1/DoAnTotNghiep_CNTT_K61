@@ -7,10 +7,10 @@ import SocialNetwork.SocialNetwork.domain.models.serviceModels.UserServiceModel;
 import java.util.List;
 
 public interface RelationshipService{
-    boolean CreateRequestAddingFriend(Integer user, Integer friendCandidateId);
-    boolean acceptFriend(Integer user, Integer friendCandidateId);
-    boolean cancelFriendRequest(Integer user, Integer friendCandidateId);
-    boolean changeStatusAndSave(Integer userId, Integer friendId, int fromStatus, int toStatus);
-    boolean removeFriend(Integer userId, Integer friendIdRemove);
-    List<User> getAllFriend(Integer userId);
+    boolean CreateRequestAddingFriend(User user, Integer friendCandidateId);
+    boolean acceptFriend(User user, Integer friendCandidateId);
+    boolean cancelFriendRequest(User user, Integer friendCandidateId);
+    boolean changeStatusAndSave(User user, Integer friendId, int fromStatus, int toStatus);
+    boolean removeFriend(User user, Integer friendIdRemove);
+    List<User> getAllFriendOfUser(User user);
 }

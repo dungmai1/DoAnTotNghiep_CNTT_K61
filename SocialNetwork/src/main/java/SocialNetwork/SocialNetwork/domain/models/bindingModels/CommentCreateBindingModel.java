@@ -10,6 +10,4 @@ public class CommentCreateBindingModel {
     private Post post;
     private String content;
     private String ImageUrl;
-    @JsonIgnoreProperties({"displayName", "userName", "password", "email"})
-    private User user;
 }

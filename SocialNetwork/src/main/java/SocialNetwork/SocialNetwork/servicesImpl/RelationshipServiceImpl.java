@@ -26,16 +26,15 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean CreateRequestAddingFriend(Integer user, Integer friendCandidateId) {
-        User userDefault = userRepository.findById(user).orElse(null);
+    public boolean CreateRequestAddingFriend(User user, Integer friendCandidateId) {
         User friendCandidate = userRepository.findById(friendCandidateId).orElse(null);
-        if(userDefault == null || friendCandidate == null) {
-            throw new CustomException("userDefault or friendCandidate not found");
+        if( friendCandidate == null) {
+            throw new CustomException("friendCandidate not found");
         }
-        Relationship relationshipFromDb = relationshipRepository.findRelationshipByUserOneIdAndUserTwoId(user,friendCandidateId);
+        Relationship relationshipFromDb = relationshipRepository.findRelationshipByUserOneIdAndUserTwoId(user.getId(), friendCandidateId);
         if (relationshipFromDb == null) {
             Relationship relationship = new Relationship();
-            relationship.setUserOne(userDefault);
+            relationship.setUserOne(user);
             relationship.setUserTwo(friendCandidate);
             relationship.setStatus(0);
             relationshipRepository.save(relationship);
@@ -46,28 +45,24 @@ public class RelationshipServiceImpl implements RelationshipService {
         return true;
     }
     @Override
-    public boolean acceptFriend(Integer user, Integer friendCandidateId) {
+    public boolean acceptFriend(User user, Integer friendCandidateId) {
         return this.changeStatusAndSave(user, friendCandidateId, 0, 1);
     }
     @Override
-    public boolean cancelFriendRequest(Integer user, Integer friendCandidateId) {
+    public boolean cancelFriendRequest(User user, Integer friendCandidateId) {
         return this.changeStatusAndSave(user, friendCandidateId, 0, 2);
     }
     @Override
-    public boolean removeFriend(Integer userId, Integer friendIdRemove){
-        return this.changeStatusAndSave(userId, friendIdRemove, 1, 2);
+    public boolean removeFriend(User user, Integer friendIdRemove){
+        return this.changeStatusAndSave(user, friendIdRemove, 1, 2);
     }
 
     @Override
-    public List<User> getAllFriend(Integer userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if(user == null) {
-            throw new CustomException("user not found");
-        }
-        List<Relationship> relationshipList = relationshipRepository.findAllNotCandidatesForFriends(userId);
+    public List<User> getAllFriendOfUser(User user) {
+        List<Relationship> relationshipList = relationshipRepository.findAllNotCandidatesForFriends(user.getId());
         List<User> users = new ArrayList<>();
         for (Relationship relationship : relationshipList) {
-            if (!relationship.getUserOne().getId().equals(userId)) {
+            if (!relationship.getUserOne().getId().equals(user.getId())) {
                 users.add(relationship.getUserOne());
             } else {
                 users.add(relationship.getUserTwo());
@@ -77,15 +72,14 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean changeStatusAndSave(Integer userId, Integer friendId, int fromStatus, int toStatus) {
-        User userDefault = userRepository.findById(userId).orElse(null);
+    public boolean changeStatusAndSave(User user, Integer friendId, int fromStatus, int toStatus) {
         User friendCandidate = userRepository.findById(friendId).orElse(null);
-        if(userDefault == null || friendCandidate == null) {
+        if( friendCandidate == null) {
             throw new CustomException("userDefault or friendCandidate not found");
         }
         Relationship relationship = this.relationshipRepository
                 .findRelationshipWithFriendWithStatus(
-                        userId, friendId, fromStatus);
+                        user.getId(), friendId, fromStatus);
         relationship.setStatus(toStatus);
         return this.relationshipRepository.save(relationship) != null;
     }
