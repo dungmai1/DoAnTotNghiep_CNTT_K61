@@ -14,7 +14,7 @@ export default function Sidebar() {
                 className={({ isActive }) => (isActive ? "active" : "inactive")}
               >
                 <i className="las la-newspaper"></i>
-                <span>Newsfeed</span>
+                <span>Home</span>
               </NavLink>
             </li>
             <li>
@@ -26,7 +26,7 @@ export default function Sidebar() {
                 <span>Profile</span>
               </NavLink>
             </li>
-            <li class=" ">
+            {/* <li class=" ">
               <a
                 href="#mailbox"
                 data-bs-toggle="collapse"
@@ -53,11 +53,17 @@ export default function Sidebar() {
                   </NavLink>
                 </li>
               </ul>
+            </li> */}
+            <li className=" ">
+              <a href="../app/todo.html" className=" ">
+                <i className="las fa-solid fa-bookmark"></i>
+                <span>Saved</span>
+              </a>
             </li>
             <li className=" ">
               <a href="../app/todo.html" className=" ">
-                <i className="las la-check-circle"></i>
-                <span>Market</span>
+                <i className="las fa fa-cog"></i>
+                <span>Settings</span> 
               </a>
             </li>
           </ul>
