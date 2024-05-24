@@ -11,11 +11,6 @@ export default function Topbar() {
                         <img src="./assets/images/logo.png" className="img-fluid" alt=""/>
                         <span>NewSocial</span>
                     </Link>
-                    <div className="iq-menu-bt align-self-center">
-                        <div className="wrapper-menu">
-                            <div className="main-circle"><i className="ri-menu-line"></i></div>
-                        </div>
-                    </div>
                 </div>
                 <div className="iq-search-bar device-search">
                     <form action="#" className="searchbox">
@@ -30,7 +25,7 @@ export default function Topbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav  ms-auto navbar-list">
-                        <li className="nav-item dropdown">
+                        {/* <li className="nav-item dropdown">
                              <a href="#" className="dropdown-toggle" id="group-drop" data-bs-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false"><i className="ri-group-line"></i></a>
                             <div className="sub-drop sub-drop-large dropdown-menu" aria-labelledby="group-drop">
@@ -124,7 +119,7 @@ export default function Topbar() {
                                     </div>
                                 </div>
                             </div>
-                        </li>
+                        </li> */}
                         <li className="nav-item dropdown">
                                   <a href="#" className="search-toggle   dropdown-toggle" id="notification-drop" data-bs-toggle="dropdown">
                                       <i className="ri-notification-4-line"></i>
