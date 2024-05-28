@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class CommentCreateBindingModel {
-    private Post post;
-    private String content;
+    private Integer PostId;
+    private String content_cmt;
     private String ImageUrl;
 }

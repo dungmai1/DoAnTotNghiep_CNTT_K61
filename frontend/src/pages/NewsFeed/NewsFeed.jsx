@@ -1,169 +1,31 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
+import PostService from "../../services/PostService";
+import ListPost from "../../components/ListPost/ListPost";
+import CreatePost from "../../components/CreatePost/CreatePost"
+
 export default function Content() {
+  const [listPost, setListPost] = useState([]);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    PostService.getAllPost(token)
+      .then((res) => {
+        setListPost(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []);
   return (
     <div id="content-page" className="content-page">
       <div className="container">
         <div className="row">
           <div className="col-lg-10 mx-auto row m-0 p-0">
             <div className="col-sm-12">
-              <div
-                id="post-modal-data"
-                className="card card-block card-stretch card-height"
-              >
-                <div className="card-header d-flex justify-content-between">
-                  <div className="header-title">
-                    <h4 className="card-title">Create Post</h4>
-                  </div>
-                </div>
-                <div className="card-body">
-                  <div className="d-flex align-items-center">
-                    <div className="user-img">
-                      <img
-                        src="../assets/images/user/1.jpg"
-                        alt="userimg"
-                        className="avatar-60 rounded-circle"
-                      />
-                    </div>
-                    <form
-                      className="post-text ms-3 w-100 "
-                      data-bs-toggle="modal"
-                      data-bs-target="#post-modal"
-                      action="javascript:void();"
-                    >
-                      <input
-                        type="text"
-                        className="form-control rounded"
-                        placeholder="Write something here..."
-                        style={{border:'none'}}
-                      />
-                    </form>
-                  </div>
-                  <hr />
-                  <ul className=" post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
-                    <li className="me-3 mb-md-0 mb-2">
-                      <a href="#" className="btn btn-soft-primary">
-                        <img
-                          src="../assets/images/small/07.png"
-                          alt="icon"
-                          className="img-fluid me-2"
-                        />{" "}
-                        Photo/Video
-                      </a>
-                    </li>
-                    <li className="me-3 mb-md-0 mb-2">
-                      <a href="#" className="btn btn-soft-primary">
-                        <img
-                          src="../assets/images/small/08.png"
-                          alt="icon"
-                          className="img-fluid me-2"
-                        />{" "}
-                        Tag Friend
-                      </a>
-                    </li>
-                    <li className="me-3">
-                      <a href="#" className="btn btn-soft-primary">
-                        <img
-                          src="../assets/images/small/09.png"
-                          alt="icon"
-                          className="img-fluid me-2"
-                        />{" "}
-                        Feeling/Activity
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  className="modal fade"
-                  id="post-modal"
-                  tabindex="-1"
-                  aria-labelledby="post-modalLabel"
-                  aria-hidden="true"
-                >
-                  <div className="modal-dialog   modal-fullscreen-sm-down">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5 className="modal-title" id="post-modalLabel">
-                          Create Post
-                        </h5>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          <i className="ri-close-fill"></i>
-                        </button>
-                      </div>
-                      <div className="modal-body">
-                        <div className="d-flex align-items-center">
-                          <div className="user-img">
-                            <img
-                              src="../assets/images/user/1.jpg"
-                              alt="userimg"
-                              className="avatar-60 rounded-circle img-fluid"
-                            />
-                          </div>
-                          <form
-                            className="post-text ms-3 w-100"
-                            action="javascript:void();"
-                          >
-                            <input
-                              type="text"
-                              className="form-control rounded"
-                              placeholder="Write something here..."
-                              style={{border:'none'}}
-                              />
-                          </form>
-                        </div>
-                        <hr />
-                        <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
-                          <li className="col-md-6 mb-3">
-                            <div className="bg-soft-primary rounded p-2 pointer me-3">
-                              <a href="#"></a>
-                              <img
-                                src="../assets/images/small/07.png"
-                                alt="icon"
-                                className="img-fluid"
-                              />{" "}
-                              Photo/Video
-                            </div>
-                          </li>
-                          <li className="col-md-6 mb-3">
-                            <div className="bg-soft-primary rounded p-2 pointer me-3">
-                              <a href="#"></a>
-                              <img
-                                src="../assets/images/small/08.png"
-                                alt="icon"
-                                className="img-fluid"
-                              />{" "}
-                              Tag Friend
-                            </div>
-                          </li>
-                          <li className="col-md-6 mb-3">
-                            <div className="bg-soft-primary rounded p-2 pointer me-3">
-                              <a href="#"></a>
-                              <img
-                                src="../assets/images/small/09.png"
-                                alt="icon"
-                                className="img-fluid"
-                              />{" "}
-                              Feeling/Activity
-                            </div>
-                          </li>
-                        </ul>
-                        <hr />
-                        <button
-                          type="submit"
-                          className="btn btn-primary d-block w-100 mt-3"
-                        >
-                          Post
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <CreatePost/>
             </div>
-            
+            {listPost.map((post) => (
+              <ListPost key={post.id} post={post}/>
+            ))}
             {/* <div className="col-sm-12">
               <div className="card card-block card-stretch card-height">
                 <div className="card-body">
@@ -2028,13 +1890,6 @@ export default function Content() {
               </div>
             </div> */}
           </div>
-          {/* <div className="col-sm-12 text-center">
-            <img
-              src="../assets/images/page-img/page-load-loader.gif"
-              alt="loader"
-              style="height: 100px;"
-            />
-          </div> */}
         </div>
       </div>
     </div>

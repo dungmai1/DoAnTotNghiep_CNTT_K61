@@ -13,4 +13,6 @@ public interface PostService {
     public boolean deletePost(User user,Integer PostId);
 
     PostServiceModel getSinglePost(User user, Integer postId);
+    public List<PostServiceModel> getAllPosts(User user);
+
 }

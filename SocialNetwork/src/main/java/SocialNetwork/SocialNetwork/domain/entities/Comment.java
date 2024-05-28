@@ -1,5 +1,6 @@
 package SocialNetwork.SocialNetwork.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    private String content;
+    private String content_cmt;
     @ManyToOne
     private User user;
     @ManyToOne

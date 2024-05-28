@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class CommentServiceModel {
     private Integer Id;
-    private String content;
+    private String content_cmt;
     private User user;
     private Post post;
     private String ImageUrl;

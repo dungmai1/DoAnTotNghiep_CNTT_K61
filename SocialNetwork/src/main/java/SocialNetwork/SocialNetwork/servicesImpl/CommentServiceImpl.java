@@ -33,20 +33,20 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public boolean addComment(CommentCreateBindingModel commentCreateBindingModel, User user) {
-        Post post = postRepository.findById(commentCreateBindingModel.getPost().getId()).orElse(null);
+        Post post = postRepository.findById(commentCreateBindingModel.getPostId()).orElse(null);
         if(post == null) {
-            throw new CustomException("userId or PostId not found");
+            throw new CustomException("PostId not found");
         }
         CommentServiceModel commentServiceModel = new CommentServiceModel();
         commentServiceModel.setCommentTime(LocalDateTime.now());
         commentServiceModel.setUser(user);
         commentServiceModel.setPost(post);
-        commentServiceModel.setImageUrl(commentServiceModel.getImageUrl());
-        commentServiceModel.setContent(commentServiceModel.getContent());
+        commentServiceModel.setImageUrl(commentCreateBindingModel.getImageUrl());
+        commentServiceModel.setContent_cmt(commentCreateBindingModel.getContent_cmt());
         Comment comment = this.modelMapper.map(commentServiceModel, Comment.class);
         post.getCommentList().add(comment);
-        postRepository.save(post);
         commentRepository.save(comment);
+        postRepository.save(post);
         return true;
     }
 
