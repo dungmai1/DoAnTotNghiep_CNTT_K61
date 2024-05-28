@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
@@ -29,7 +29,7 @@ public class CommentController {
             commentService.addComment(commentCreateBindingModel,user);
             return new ResponseEntity<>(new ApiResponse(true,"Add Comment Success"), HttpStatus.CREATED);
         }catch (CustomException e){
-            return new ResponseEntity<>(new ApiResponse(true,e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(false,e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/CountAllCommentForPost")
@@ -49,7 +49,7 @@ public class CommentController {
             commentService.deleteComment(user,PostId,CommentId);
             return new ResponseEntity<>(new ApiResponse(true,"Delete Comment Success"), HttpStatus.OK);
         }catch (CustomException e){
-            return new ResponseEntity<>(new ApiResponse(true,e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(false,e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/getAllCommentForPost")

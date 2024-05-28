@@ -45,7 +45,7 @@ public class PostController {
         }
     }
     @GetMapping("/GetAllPostByUser")
-    public List<PostServiceModel> getAllPost(@RequestHeader("Authorization") String jwt){
+    public List<PostServiceModel> getAllPostByUser(@RequestHeader("Authorization") String jwt){
         User user = userService.findUserByJwt(jwt);
         List<PostServiceModel> postServiceModelList = postService.getAllPostsByUser(user);
         return postServiceModelList;
@@ -57,5 +57,10 @@ public class PostController {
         PostServiceModel postServiceModel = postService.getSinglePost(user,PostId);
         return postServiceModel;
     }
-
+    @GetMapping("/GetAllPost")
+    public List<PostServiceModel> getAllPost(@RequestHeader("Authorization") String jwt){
+        User user = userService.findUserByJwt(jwt);
+        List<PostServiceModel> postServiceModelList = postService.getAllPosts(user);
+        return postServiceModelList;
+    }
 }

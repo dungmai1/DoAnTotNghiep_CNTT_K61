@@ -9,7 +9,7 @@ export default function Home() {
         <div className="wrapper">
         <SideBar/>
         <Topbar/>
-        <RightSidebar/>
+        {/* <RightSidebar/> */}
         <div className="contents" style={{marginTop: '75px'}}>
           <Outlet/>
         </div>

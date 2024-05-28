@@ -1,11 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   return (
     <body className=" ">
-      <div id="loading">
+      {/* <div id="loading">
         <div id="loading-center"></div>
-      </div>
+      </div> */}
 
       <div className="wrapper">
         <section className="sign-in-page">
@@ -126,7 +127,8 @@ export default function Register() {
                     </div>
                     <div className="sign-info">
                       <span className="dark-color d-inline-block line-height-2">
-                        Already Have Account ? <a href="sign-in.html">Log In</a>
+                        Already Have Account ? 
+                        <Link to="/login">Log In</Link>
                       </span>
                       <ul className="iq-social-media">
                         <li>

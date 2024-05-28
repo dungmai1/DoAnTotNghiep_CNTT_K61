@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 export default function Sidebar() {
@@ -54,6 +53,19 @@ export default function Sidebar() {
                 </li>
               </ul>
             </li> */}
+
+            <li className=" ">
+              <a href="/group" className=" ">
+                <i className="las fa fa-shopping-cart"></i>
+                <span>Markets</span> 
+              </a>
+            </li>
+            <li className=" ">
+              <NavLink to="/search" className=" ">
+                <i className="las fa fa-search"></i>
+                <span>Search</span> 
+              </NavLink>
+            </li>
             <li className=" ">
               <a href="../app/todo.html" className=" ">
                 <i className="las fa-solid fa-bookmark"></i>
@@ -66,6 +78,7 @@ export default function Sidebar() {
                 <span>Settings</span> 
               </a>
             </li>
+
           </ul>
         </nav>
         <div className="p-5"></div>

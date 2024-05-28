@@ -68,4 +68,15 @@ public class PostServiceImpl implements PostService {
         PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
         return postServiceModel;
     }
+
+    @Override
+    public List<PostServiceModel> getAllPosts(User user) {
+        List<Post> postList = postRepository.findAll();
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Post post : postList) {
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
+        return postServiceModels;
+    }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
+import App from "./App.js";
 import Home from "./pages/Home/Home.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Content from "./pages/NewsFeed/NewsFeed.jsx";
@@ -14,8 +14,10 @@ import {
   createBrowserRouter,
   RouterProvider,
   Route,
-  Link,
+  Link
 } from "react-router-dom";
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,7 +54,6 @@ const router = createBrowserRouter([
     element: <Search/>,
   }
 ]);
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
