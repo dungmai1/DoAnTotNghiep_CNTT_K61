@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import RegisterService from "../../services/RegisterService";
 
 export default function Register() {
+  const [dataRegister,setdataRegister] = useState("")
+  const handleChange = (e) =>{
+    setdataRegister({...dataRegister,[e.target.name]:e.target.value})
+  }
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    RegisterService.Register(dataRegister)
+    .then((res)=>{
+      alert("Succes")
+      console.log(dataRegister)
+    })
+    .catch((error)=>{
+      console.error("Error Register",error)
+      console.log(dataRegister)
+    })
+  }
   return (
     <body className=" ">
-      {/* <div id="loading">
-        <div id="loading-center"></div>
-      </div> */}
-
       <div className="wrapper">
         <section className="sign-in-page">
           <div id="container-inside">
@@ -74,29 +87,34 @@ export default function Register() {
                 <div className="sign-in-from">
                   <h1 className="mb-0">Sign Up</h1>
                   <p>
-                    Enter your email address and password to access admin panel.
+                    Enter your phone number and password to access home page.
                   </p>
-                  <form className="mt-4">
+                  <form className="mt-4" onSubmit={handleSubmit}>
                     <div className="form-group">
                       <label className="form-label" for="exampleInputEmail1">
                         Your Full Name
                       </label>
                       <input
-                        type="email"
+                        type="text"
                         className="form-control mb-0"
-                        id="exampleInputEmail1"
                         placeholder="Your Full Name"
+                        name="displayname"
+                        value={dataRegister.displayname}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="form-group">
                       <label className="form-label" for="exampleInputEmail2">
-                        Email address
+                        Phone Number
                       </label>
                       <input
-                        type="email"
+                        type="phone"
                         className="form-control mb-0"
-                        id="exampleInputEmail2"
-                        placeholder="Enter email"
+                        placeholder="Enter Phone Number"
+                        name="phone"
+                        value={dataRegister.phone}
+                        onChange={handleChange}
+
                       />
                     </div>
                     <div className="form-group">
@@ -106,8 +124,10 @@ export default function Register() {
                       <input
                         type="password"
                         className="form-control mb-0"
-                        id="exampleInputPassword1"
                         placeholder="Password"
+                        name="password"
+                        value={dataRegister.password}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="d-inline-block w-100">

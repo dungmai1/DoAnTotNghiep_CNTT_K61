@@ -1,14 +1,44 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 import { FileUploader } from "react-drag-drop-files";
+import ListPost from "../ListPost/ListPost";
+import Yolov8 from "../../services/Yolov8";
+import PostService from "../../services/PostService";
 
 const fileTypes = ["JPEG", "PNG", "GIF", "JPG"];
 
-export default function Post() {
+export default function ImportImage() { 
+
+  // const [listPost, setListPost] = useState([]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   PostService.getAllPost(token)
+  //     .then((res) => {
+  //       setListPost(res.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching posts:", error);
+  //     });
+  // }, []);
+
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    Yolov8.predict(fileName)
+    .then((res)=>{
+      setdisplayImage(res.data)
+    })
+    .catch((error)=>{
+      console.error("Error",error)
+    })
+  }
   const [file, setFile] = useState(null);
+  const [fileName, setfileName] = useState(null);
+  const [displayImage, setdisplayImage] = useState(null)
+  const image = "http://127.0.0.1:6868/" + displayImage
   const handleChange = (e) => {
     setFile(URL.createObjectURL(e.target.files[0]));
+    setfileName(e.target.files[0])
   };
   return (
     <div className="" style={{ marginTop: "85px" }}>
@@ -29,7 +59,7 @@ export default function Post() {
                     </div>
                   </div>
                   <div className="col-sm-2">
-                    <a href="">Search</a>
+                    <a href="" onClick={handleSubmit}>Search</a>
                     </div>
                   <img
                         src={file}
@@ -152,9 +182,9 @@ export default function Post() {
                   <div className="user-post">
                     <a href="#">
                       <img
-                        src=""
+                        src={image}
                         alt="post-image"
-                        className="img-fluid w-100"
+                        className="img-fluid w-50"
                       />
                     </a>
                   </div>

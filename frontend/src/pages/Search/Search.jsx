@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Topbar from "../../components/Topbar/Topbar";
-import Post from "../../components/Post/Post";
+import ImportImage from "../../components/ImportImage/ImportImage";
 export default function Search() {
     return(
         <div className="wrapper">
         <Topbar/>
-        <Post/>
+        <ImportImage/>
         </div>
     );
 }

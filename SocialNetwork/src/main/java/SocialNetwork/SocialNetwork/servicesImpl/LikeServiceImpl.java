@@ -31,12 +31,19 @@ public class LikeServiceImpl implements LikeService {
         if ( post == null) {
             throw new CustomException("PostId not found");
         }
-        Like like = new Like();
-        like.setUser(user);
-        like.setPost(post);
-        like.setCount(1L);
-        post.getLikeList().add(like);
-        likeRepository.save(like);
+        Like checkLike = likeRepository.findByUserAndPost(user, post);
+        if ( checkLike != null ) {
+            post.getLikeList().remove(checkLike);
+            postRepository.save(post);
+            likeRepository.delete(checkLike);
+        }else {
+            Like like = new Like();
+            like.setUser(user);
+            like.setPost(post);
+            like.setCount(1L);
+            post.getLikeList().add(like);
+            likeRepository.save(like);
+        }
         postRepository.save(post);
         return true;
     }
@@ -50,15 +57,15 @@ public class LikeServiceImpl implements LikeService {
         return this.likeRepository.findAllLikesByPost(post).size();
     }
 
-    @Override
-    public boolean unlike(Integer postId,  User user) {
-        Post post = postRepository.findById(postId).orElse(null);
-        Like likeByUserAndPost = likeRepository.findByUserAndPost(user, post);
-        if (likeByUserAndPost != null) {
-            likeRepository.delete(likeByUserAndPost);
-        }
-        return true;
-    }
+//    @Override
+//    public boolean unlike(Integer postId,  User user) {
+//        Post post = postRepository.findById(postId).orElse(null);
+//        Like likeByUserAndPost = likeRepository.findByUserAndPost(user, post);
+//        if (likeByUserAndPost != null) {
+//            likeRepository.delete(likeByUserAndPost);
+//        }
+//        return true;
+//    }
 
     @Override
     public List<User> getAllUserLikePost(Integer postId) throws CustomException{
