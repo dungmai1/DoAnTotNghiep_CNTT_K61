@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import LoginService from "../../services/LoginService";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 export default function Login() {
-    const navigate = useNavigate();
-
-  const [account, setaccount] = useState({
-    phone: "",
-    password: "",
-  });
+  const navigate = useNavigate();
+  const [account, setaccount] = useState([]);
   const handleChange = (e) => {
     setaccount({ ...account, [e.target.name]: e.target.value });
   };
@@ -18,19 +14,14 @@ export default function Login() {
     LoginService.Login(account)
       .then((res) => {
         alert("Success");
-        navigate("/")
         localStorage.setItem("accessToken", res.data.token);
+        navigate("/");
       })
       .catch((error) => {
         console.error("Error Login", error);
       });
   };
   return (
-    <body className=" ">
-      {/* <div id="loading">
-              <div id="loading-center">
-              </div>
-        </div>         */}
       <div className="wrapper">
         <section className="sign-in-page">
           <div id="container-inside">
@@ -176,6 +167,5 @@ export default function Login() {
           </div>
         </section>
       </div>
-    </body>
   );
 }

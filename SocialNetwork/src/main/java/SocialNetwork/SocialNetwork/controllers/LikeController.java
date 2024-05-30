@@ -40,17 +40,17 @@ public class LikeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-    @DeleteMapping("/UnLike")
-    public ResponseEntity UnLike(@RequestHeader("Authorization") String jwt,
-                                 Integer PostId){
-        try{
-            User user = userService.findUserByJwt(jwt);
-            likeService.unlike(PostId,user);
-            return new ResponseEntity<>(new ApiResponse(true,"UnLike Success"),HttpStatus.BAD_REQUEST);
-        }catch (CustomException e){
-            return new ResponseEntity<>(new ApiResponse(false,"UnLike Fail"),HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @DeleteMapping("/UnLike")
+//    public ResponseEntity UnLike(@RequestHeader("Authorization") String jwt,
+//                                 Integer PostId){
+//        try{
+//            User user = userService.findUserByJwt(jwt);
+//            likeService.unlike(PostId,user);
+//            return new ResponseEntity<>(new ApiResponse(true,"UnLike Success"),HttpStatus.BAD_REQUEST);
+//        }catch (CustomException e){
+//            return new ResponseEntity<>(new ApiResponse(false,"UnLike Fail"),HttpStatus.BAD_REQUEST);
+//        }
+//    }
     @GetMapping("/AllUserLikePost")
     public List<User> getAllUserLikePost(Integer PostId){
         List<User> userList = likeService.getAllUserLikePost(PostId);

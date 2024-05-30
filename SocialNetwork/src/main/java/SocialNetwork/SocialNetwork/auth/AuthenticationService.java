@@ -39,10 +39,6 @@ public class AuthenticationService {
                 .build();
     }
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User checkUser = userRepository.findByPhone(request.getPhone()).orElse(null);
-        if(checkUser==null){
-            throw new CustomException("User with this phone number not exists");
-        }
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getPhone(),

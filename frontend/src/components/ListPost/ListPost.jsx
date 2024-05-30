@@ -1,32 +1,101 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { formatDistanceToNow } from "date-fns";
 import LikeService from "../../services/LikeService";
 import CommentService from "../../services/CommentService";
+import { vi } from "date-fns/locale";
+import { jwtDecode } from "jwt-decode";
 
 export default function ListPost({ post }) {
   const token = localStorage.getItem("accessToken");
-  const formattedPostTime = formatDistanceToNow(post.postTime, {
-    addSuffix: true,
-  });
-  // const formattedCommentTime = formatDistanceToNow(commentlist.commentTime, {
-  //   addSuffix: true,
-  // });
+  const user = jwtDecode(token);
   const [countlike, setcountlike] = useState("");
+  const [comment, setcomment] = useState({
+    content_cmt: "",
+    imageUrl: "",
+    postId: 0,
+  });
   const [countcomment, setcountcomment] = useState("");
   const [userlikePost, setuserlikePost] = useState([]);
   const [commentlist, setcommentlist] = useState([]);
+  const [load, setload] = useState(false);
+  const PostTime = formatDistanceToNow(
+    post.postTime,
+    { locale: vi },
+    {
+      addSuffix: true,
+    }
+  );
+  const formatPostTime = PostTime.replace(" giây", "s")
+    .replace(" phút", "m")
+    .replace(" giờ", "h")
+    .replace(" ngày", "d")
+    .replace(" tháng", "mo")
+    .replace(" năm", "y")
+    .replace("dưới", "")
+    .replace("khoảng", "")
+    .replace(" ", "");
+  const [showcomment, setshowcomment] = useState(false);
 
+  const handleCommentToggle = () => {
+    setshowcomment(!showcomment)
+  };
+
+  const formatDate = (time) => {
+    const defaultTime = formatDistanceToNow(time, {
+      locale: vi,
+      addSuffix: true,
+    });
+    return defaultTime
+      .replace(" giây", "s")
+      .replace(" phút", "m")
+      .replace(" giờ", "h")
+      .replace(" ngày", "d")
+      .replace(" tháng", "mo")
+      .replace(" năm", "y")
+      .replace("khoảng", "")
+      .replace("trước", "")
+      .replace("dưới", "")
+      .replace(" ", "");
+  };
+
+  const checkLike = () => {
+    return userlikePost.some((item) => {
+      return item.phone === user.sub;
+    });
+  };
+  const handleFileSelect = () => {
+    document.getElementById("inputfileimage").click();
+  };
+  const handleChange = (e) => {
+    setcomment({
+      ...comment,
+      [e.target.name]: e.target.value,
+      postId: post.id,
+    });
+  };
+  const handleSubmitComment = (e) => {
+    e.preventDefault();
+    CommentService.createComment(comment, token)
+      .then((res) => {
+        setcomment({ content_cmt: "", imageUrl: "", postId: 0 });
+        setload(!load);
+      })
+      .catch((error) => {
+        console.error("Error Comment Like", error);
+        console.log(comment);
+      });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    LikeService.AddLike(post.id, token)
+    LikeService.addLike(post.id, token)
       .then((res) => {
-        alert("Like success");
+        setload(!load);
       })
       .catch((error) => {
         console.error("Error Add Like", error);
-        console.log(post.id);
       });
   };
+
   useEffect(() => {
     LikeService.AllUserLikePost(post.id)
       .then((res) => {
@@ -59,7 +128,7 @@ export default function ListPost({ post }) {
       .catch((error) => {
         console.error("Error comment list", error);
       });
-  }, []);
+  }, [load]);
   return (
     <div className="col-sm-12">
       <div className="card">
@@ -70,7 +139,7 @@ export default function ListPost({ post }) {
                 <div className="me-2">
                   <img
                     className="rounded-circle avatar-40"
-                    src="../assets/images/user/1.jpg"
+                    src={post.user.avatar}
                     alt=""
                   />
                 </div>
@@ -83,7 +152,7 @@ export default function ListPost({ post }) {
                         </a>
                       </h5>
                       <p className="ms-1 mb-0 d-inline-block">
-                        {formattedPostTime}
+                        {formatPostTime}
                       </p>
                     </div>
                     <div className="card-post-toolbar">
@@ -141,22 +210,22 @@ export default function ListPost({ post }) {
                   <div className="d-flex align-items-center">
                     <div className="like-data">
                       <div className="dropdown">
-                        <span
-                          className="dropdown-toggle"
-                          data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                          role="button"
-                        >
-                          <i
-                            className="far fa-heart"
-                            aria-hidden="true"
-                            onClick={() => handleSubmit()}
-                          ></i>
-                          <i
-                            class="fas fa-heart"
-                            style={{ color: "#ff0000" }}
-                          ></i>
+                        <span>
+                          {checkLike() ? (
+                            <a href="" onClick={handleSubmit}>
+                              <i
+                                className="fas fa-heart"
+                                style={{ color: "#ff0000" }}
+                              ></i>
+                            </a>
+                          ) : (
+                            <a href="" onClick={handleSubmit}>
+                              <i
+                                className="far fa-heart"
+                                aria-hidden="true"
+                              ></i>
+                            </a>
+                          )}
                         </span>
                       </div>
                     </div>
@@ -169,7 +238,7 @@ export default function ListPost({ post }) {
                           aria-expanded="false"
                           role="button"
                         >
-                          {countlike} Likes
+                          {countlike}
                         </span>
                         <div className="dropdown-menu">
                           {userlikePost.map((userlikePost) => (
@@ -181,7 +250,7 @@ export default function ListPost({ post }) {
                       </div>
                     </div>
                   </div>
-                  <div className="total-comment-block">
+                  {/* <div className="total-comment-block">
                     <div className="dropdown">
                       <span
                         className="dropdown-toggle"
@@ -190,7 +259,8 @@ export default function ListPost({ post }) {
                         aria-expanded="false"
                         role="button"
                       >
-                        {countcomment} Comment
+                        <i class="fa fa-comment"></i>
+                        {countcomment}
                       </span>
                       <div className="dropdown-menu">
                         <a className="dropdown-item" href="#">
@@ -216,60 +286,110 @@ export default function ListPost({ post }) {
                         </a>
                       </div>
                     </div>
+                  </div> */}
+                  <div className="d-flex align-items-center">
+                    <div className="like-data">
+                      <div className="dropdown">
+                        <span onClick={() =>handleCommentToggle(post.id)}>
+                          <i class="far fa-comment"></i>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="total-like-block ms-2 me-3">
+                      <div className="dropdown">
+                        <span>{countcomment}</span>
+                        {/* <div className="dropdown-menu">
+                          {userlikePost.map((userlikePost) => (
+                            <a className="dropdown-item" href="#">
+                              {userlikePost.displayname}
+                            </a>
+                          ))}
+                        </div> */}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <hr />
-              {commentlist.map((cmtList) => (
-                <ul className="post-comments p-0 m-0">
-                  <li className="mb-2">
-                    <div className="d-flex flex-wrap">
-                      <div className="user-img">
-                        <img
-                          src="../assets/images/user/02.jpg"
-                          alt="userimg"
-                          className="avatar-35 rounded-circle img-fluid"
-                        />
-                      </div>
-                      <div className="comment-data-block ms-3">
-                        <h6>
-                          {cmtList.user.displayname}
-                        </h6>
-                        <p className="mb-0">
-                          {cmtList.content_cmt}
-                          </p>
-                        <div className="d-flex flex-wrap align-items-center comment-activity">
-                          <a href="#">like</a>
-                          <a href="#">reply</a>
-                          <a href="#">translate</a>
-                          <span>{formatDistanceToNow(cmtList.commentTime)}</span>
+              {showcomment ? (
+                <div >
+                <hr />
+                {commentlist.map((cmtList) => (
+                  <ul className="post-comments p-0 m-0">
+                    <li className="mb-2">
+                      <div className="d-flex flex-wrap">
+                        <div className="user-img">
+                          <img
+                            src={cmtList.user.avatar}
+                            alt="userimg"
+                            className="avatar-35 rounded-circle img-fluid"
+                          />
+                        </div>
+                        <div className="comment-data-block ms-3">
+                          <div className="">
+                            <h6 className="mb-0 d-inline-block">
+                              <a
+                                href="#"
+                                className=""
+                                style={{ fontSize: "15px" }}
+                              >
+                                {cmtList.user.displayname}
+                              </a>
+                            </h6>
+                            <p className="ms-1 mb-0 d-inline-block">
+                              {formatDate(cmtList.commentTime)}{" "}
+                            </p>
+                          </div>
+                          <p className="mb-0">{cmtList.content_cmt}</p>
+                          <div className="d-flex flex-wrap align-items-center comment-activity">
+                            <a href="#">
+                              <i
+                                className="far fa-heart"
+                                aria-hidden="true"
+                              ></i>
+                            </a>
+                            <a href="#">
+                              <i class="far fa-comment"></i>
+                            </a>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                </ul>
-               ))} 
-              <form
-                className="comment-text d-flex align-items-center mt-3"
-                action="javascript:void(0);"
-              >
-                <input
-                  type="text"
-                  className="form-control rounded"
-                  placeholder="Enter Your Comment"
-                />
-                <div className="comment-attagement d-flex">
-                  <a href="#">
-                    <i className="ri-link me-3"></i>
-                  </a>
-                  <a href="#">
-                    <i className="ri-user-smile-line me-3"></i>
-                  </a>
-                  <a href="#">
-                    <i className="ri-camera-line me-3"></i>
-                  </a>
-                </div>
-              </form>
+                    </li>
+                  </ul>
+                ))}
+                <form className="comment-text d-flex align-items-center mt-3">
+                  <input
+                    type="text"
+                    className="form-control rounded"
+                    placeholder="Enter Your Comment"
+                    name="content_cmt"
+                    value={comment.content_cmt}
+                    onChange={handleChange}
+                  />
+                  <input
+                    id="inputfileimage"
+                    type="file"
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    name="image"
+                    value={comment.imageUrl}
+                    onChange={handleChange}
+                  />
+                  <div className="comment-attagement d-flex">
+                    <a href="#">
+                      <i
+                        className="ri-camera-line me-3"
+                        onClick={handleFileSelect}
+                      ></i>
+                      <i
+                        onClick={handleSubmitComment}
+                        className="fa fa-paper-plane me-3"
+                      ></i>
+                    </a>
+                  </div>
+                </form>
+              </div>
+              ):<></>}
+              
             </div>
           </div>
         </div>

@@ -1,17 +1,28 @@
 import React, { useEffect, useState, useRef } from "react";
 import PostService from "../../services/PostService";
 import ListPost from "../../components/ListPost/ListPost";
-import CreatePost from "../../components/CreatePost/CreatePost"
+import CreatePost from "../../components/CreatePost/CreatePost";
+import UserService from "../../services/UserService";
 function Profile() {
   const [listPost, setListPost] = useState([]);
-  const token = localStorage.getItem("accessToken")
+  const [postCount, setPostCount] = useState(0);
+  const token = localStorage.getItem("accessToken");
+  const [user, setuser] = useState("");
   useEffect(() => {
     PostService.getAllPostByUser(token)
       .then((res) => {
         setListPost(res.data);
+        setPostCount(res.data.length);
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
+      });
+    UserService.getUser(token)
+      .then((res) => {
+        setuser(res.data);
+      })
+      .catch((error) => {
+        console.error("Error get User", error);
       });
   }, []);
   return (
@@ -44,13 +55,13 @@ function Profile() {
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">
                       <img
-                        src="../assets/images/user/11.png"
+                        src={user.avatar}
                         alt="profile-img"
                         className="avatar-130 img-fluid"
                       />
                     </div>
                     <div className="profile-detail">
-                      <h3 className="">Dung Mai</h3>
+                      <h3 className="">{user.displayname}</h3>
                     </div>
                   </div>
                   <div className="profile-info p-3 d-flex align-items-center justify-content-between position-relative">
@@ -58,7 +69,7 @@ function Profile() {
                       <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
                         <li className="text-center ps-3">
                           <h6>Posts</h6>
-                          <p className="mb-0">690</p>
+                          <p className="mb-0">{postCount}</p>
                         </li>
                         <li className="text-center ps-3">
                           <h6>Followers</h6>
@@ -74,7 +85,6 @@ function Profile() {
                 </div>
               </div>
             </div>
-
           </div>
           <div className="col-sm-12">
             <div className="tab-content">
@@ -86,9 +96,9 @@ function Profile() {
                 <div className="card-body p-0">
                   <div className="row">
                     <div className="col-lg-8 mx-auto">
-                      <CreatePost/>
+                      <CreatePost />
                       {listPost.map((post) => (
-                        <ListPost key={post.id} post={post}/>
+                        <ListPost key={post.id} post={post} />
                       ))}
                     </div>
                   </div>
