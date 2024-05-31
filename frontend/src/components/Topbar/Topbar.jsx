@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "./Topbar.css";
 import UserService from "../../services/UserService";
 
 export default function Topbar() {
   const [user, setuser] = useState("");
   const token = localStorage.getItem("accessToken");
+
+  const handleSignOut = (e) =>{
+    e.preventDefault();
+    localStorage.removeItem('accessToken')
+  }
   useEffect(() => {
     UserService.getUser(token)
       .then((res) => {
@@ -288,12 +293,12 @@ export default function Topbar() {
                 >
                   <div className="card shadow-none m-0">
                     <div className="card-body p-0 ">
-                      <div className="d-inline-block w-100 text-center p-3">
+                      <div className="d-inline-block w-100 text-center">
                         <a
                           className="btn btn-primary iq-sign-btn"
-                          href="../dashboard/sign-in.html"
+                          href=""
                           role="button"
-                        >
+                          onClick={handleSignOut}                       >
                           Sign out<i className="ri-login-box-line ms-2"></i>
                         </a>
                       </div>

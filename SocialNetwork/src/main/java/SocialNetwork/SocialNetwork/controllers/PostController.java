@@ -63,4 +63,20 @@ public class PostController {
         List<PostServiceModel> postServiceModelList = postService.getAllPosts(user);
         return postServiceModelList;
     }
+    @PostMapping("/Save")
+    public ResponseEntity<ApiResponse> savePost(Integer PostId,@RequestHeader("Authorization") String jwt) {
+        try{
+            User user = userService.findUserByJwt(jwt);
+            postService.savePost(user,PostId);
+            return new ResponseEntity<>(new ApiResponse(true, "Save Post success"), HttpStatus.OK);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/GetAllSavedPost")
+    public List<PostServiceModel> GetAllSavedPost(@RequestHeader("Authorization") String jwt){
+        User user = userService.findUserByJwt(jwt);
+        List<PostServiceModel> postServiceModelList = postService.GetAllSavedPost(user);
+        return postServiceModelList;
+    }
 }

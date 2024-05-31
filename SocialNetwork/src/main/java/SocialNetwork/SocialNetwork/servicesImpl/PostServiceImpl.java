@@ -1,11 +1,14 @@
 package SocialNetwork.SocialNetwork.servicesImpl;
 
+import SocialNetwork.SocialNetwork.domain.entities.Like;
+import SocialNetwork.SocialNetwork.domain.entities.Saved;
 import SocialNetwork.SocialNetwork.domain.entities.User;
 import SocialNetwork.SocialNetwork.domain.models.bindingModels.PostCreateBindingModel;
 import SocialNetwork.SocialNetwork.domain.entities.Post;
 import SocialNetwork.SocialNetwork.domain.models.serviceModels.PostServiceModel;
 import SocialNetwork.SocialNetwork.exception.CustomException;
 import SocialNetwork.SocialNetwork.repositories.PostRepository;
+import SocialNetwork.SocialNetwork.repositories.SavedRepository;
 import SocialNetwork.SocialNetwork.repositories.UserRepository;
 import SocialNetwork.SocialNetwork.services.PostService;
 
@@ -22,13 +25,14 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
+    private final SavedRepository savedRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, ModelMapper modelMapper) {
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, SavedRepository savedRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.savedRepository = savedRepository;
         this.modelMapper = modelMapper;
     }
     @Override
@@ -79,4 +83,35 @@ public class PostServiceImpl implements PostService {
         }
         return postServiceModels;
     }
+
+    @Override
+    public boolean savePost(User user, Integer postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            return false;
+        }
+        Saved checksaved = savedRepository.findByUserAndPost(user, post);
+        if ( checksaved != null ) {
+            savedRepository.delete(checksaved);
+        }else {
+            Saved saved = new Saved();
+            saved.setPost(post);
+            saved.setUser(user);
+            savedRepository.save(saved);
+        }
+        return true;
+    }
+
+    @Override
+    public List<PostServiceModel> GetAllSavedPost(User user) {
+        List<Saved> savedPosts = savedRepository.findAllByUser(user);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Saved saved : savedPosts) {
+            Post post = saved.getPost();
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
+        return postServiceModels;
+    }
+
 }
