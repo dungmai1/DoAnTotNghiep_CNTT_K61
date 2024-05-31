@@ -15,4 +15,7 @@ public interface PostService {
     PostServiceModel getSinglePost(User user, Integer postId);
     public List<PostServiceModel> getAllPosts(User user);
 
+    public boolean savePost(User user, Integer postId);
+    public List<PostServiceModel> GetAllSavedPost(User user);
+
 }

@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import PostService from "../../services/PostService";
+import {ref,uploadBytes} from "firebase/storage"
+import {v4} from "uuid"
+import { imageDb } from "../../firebase/config";
 
-export default function CreatePost() {
+export default function CreatePost({handleLoad}) {
   const token = localStorage.getItem("accessToken");
+  const [Img,setImg] =useState([])
   const [createPost, setcreatePost] = useState({
     content: "",
     imageUrl: "",
@@ -11,36 +15,93 @@ export default function CreatePost() {
   const handleChange = (e) => {
     setcreatePost({ ...createPost, [e.target.name]: e.target.value });
   };
-  const formRef = useRef(null);
+  const handleButtonClick = async (e) => {
+    e.preventDefault();
+    const folderId = v4(); 
+    const uploadPromises = Img.map(file => {
+      const uniqueFileName = `${folderId}/${file.name}`;
+      const imgRef = ref(imageDb, `dataImage/${uniqueFileName}`);
+      return uploadBytes(imgRef, file).then(() => {
+        console.log(`Uploaded ${file.name} to folder ${folderId}`);
+      });
+    });
 
-  const handleButtonClick = (e) => {
-    if (formRef.current) {
-      e.preventDefault();
-      PostService.createPost(createPost, token)
-        .then((res) => {
-          alert("Success");
-        })
-        .catch((error) => {
-          console.error("Error Create Post", error);
-          console.log(createPost);
-        });
+    try {
+      await Promise.all(uploadPromises);
+      setcreatePost(prevState => ({
+        ...prevState,
+        imageUrl: folderId,
+      }));
+      const updatedPost = {
+        ...createPost,
+        imageUrl: folderId,
+      };
+
+      await PostService.createPost(updatedPost, token);
+      alert("Success");
+      setcreatePost({imageUrl:"",content:""});
+      const imageContainer = document.querySelector(".imageContainer");
+      imageContainer.innerHTML = ""; // Clear any existing images
+      document.getElementById("button_exit").click()
+      handleLoad()
+
+    } catch (error) {
+      console.error("Error Create Post", error);
+      console.log(createPost);
     }
   };
-  const fileInputRef = useRef(null);
 
+  const formRef = useRef(null);
+  const fileInputRef = useRef(null);
   const handleFileSelect = () => {
     fileInputRef.current.click();
   };
-
   const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setcreatePost({ ...createPost, imageUrl: file.name });
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageContainer = document.querySelector(".imageContainer");
-      imageContainer.innerHTML = ` <img src="${reader.result}" alt="post-image" className="img-fluid w-100"/>`;
-    };
-    reader.readAsDataURL(file);
+    const files = Array.from(event.target.files);
+    setImg(files);
+    // setcreatePost({ ...createPost, imageUrl: files.map(file => file.name) });  
+    const imageContainer = document.querySelector(".imageContainer");
+    imageContainer.innerHTML = ""; // Clear any existing images
+  
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "img-wrapper";
+        imgWrapper.style.position = "relative";
+        imgWrapper.style.display = "inline-block";
+        imgWrapper.style.margin = "10px";
+  
+        const img = document.createElement("img");
+        img.src = reader.result;
+        img.alt = "post-image";
+        img.className = "img-fluid";
+        img.style.width = "200px";
+  
+        const clearButton = document.createElement("button");
+        clearButton.className = "clear-button";
+        clearButton.style.position = "absolute";
+        clearButton.style.top = "10px";
+        clearButton.style.right = "10px";
+        clearButton.style.background = "rgba(255, 255, 255, 0.7)";
+        clearButton.style.border = "none";
+        clearButton.style.cursor = "pointer";
+        clearButton.innerHTML = '<i className="ri-close-fill"></i>';
+  
+        clearButton.addEventListener("click", () => {
+          imgWrapper.remove();
+          const updatedFiles = Array.from(event.target.files).filter((_, i) => i !== index);
+          const updatedFileList = new DataTransfer();
+          updatedFiles.forEach(file => updatedFileList.items.add(file));
+          event.target.files = updatedFileList.files;
+          setImg(updatedFiles);
+        });
+        imgWrapper.appendChild(img);
+        imgWrapper.appendChild(clearButton);
+        imageContainer.appendChild(imgWrapper);
+      };
+      reader.readAsDataURL(file);
+    });
   };
   return (
     <div id="post-modal-data" className="card">
@@ -87,6 +148,7 @@ export default function CreatePost() {
                 Create Post
               </h5>
               <button
+              id="button_exit"
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
@@ -119,7 +181,8 @@ export default function CreatePost() {
                 </form>
               </div>
               <hr />
-              <div className="imageContainer"></div>
+              <div className="imageContainer">
+              </div>
               <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
                 <li className="col-md-6 mb-3">
                   <div
@@ -134,6 +197,7 @@ export default function CreatePost() {
                       name="image"
                       value={createPost.image}
                       onChange={handleFileInputChange}
+                      multiple
                     />
                     <img
                       src="../assets/images/small/07.png"

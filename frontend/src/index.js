@@ -10,6 +10,8 @@ import Message from "./pages/Message/Message.jsx";
 import Login from "./pages/Login/Login.jsx"
 import Register from "./pages/Register/Register.jsx"
 import Search from "./pages/Search/Search.jsx"
+import Saved from "./pages/Saved/Saved.jsx"
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -34,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "group",
         element: <Group/>,
+      },
+      {
+        path: "saved",
+        element: <Saved/>,
       }
     ],
   },

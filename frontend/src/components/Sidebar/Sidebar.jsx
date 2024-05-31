@@ -67,10 +67,10 @@ export default function Sidebar() {
               </NavLink>
             </li>
             <li className=" ">
-              <a href="../app/todo.html" className=" ">
+              <NavLink to="/saved" className=" ">
                 <i className="las fa-solid fa-bookmark"></i>
                 <span>Saved</span>
-              </a>
+              </NavLink>
             </li>
             <li className=" ">
               <a href="../app/todo.html" className=" ">
