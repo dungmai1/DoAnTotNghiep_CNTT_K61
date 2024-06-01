@@ -26,61 +26,64 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean CreateRequestAddingFriend(User user, Integer friendCandidateId) {
+    public boolean CreateRequestAddingFriend(User user, Integer friendCandidateId) throws CustomException{
         User friendCandidate = userRepository.findById(friendCandidateId).orElse(null);
-        if( friendCandidate == null) {
-            throw new CustomException("friendCandidate not found");
+        if( friendCandidate == null || friendCandidate == user ) {
+            throw new CustomException("User not found");
         }
-        Relationship relationshipFromDb = relationshipRepository.findRelationshipByUserOneIdAndUserTwoId(user.getId(), friendCandidateId);
-        if (relationshipFromDb == null) {
+        Relationship checkFriendRelationship = relationshipRepository.findByUserOneAndUserTwo(user,friendCandidate);
+        if(checkFriendRelationship != null) {
+            relationshipRepository.delete(checkFriendRelationship);
+            throw new CustomException("Delete relationship");
+        }else{
             Relationship relationship = new Relationship();
             relationship.setUserOne(user);
             relationship.setUserTwo(friendCandidate);
-            relationship.setStatus(0);
+            relationship.setStatus(1);
             relationshipRepository.save(relationship);
-        }else{
-            relationshipFromDb.setStatus(0);
-            relationshipRepository.save(relationshipFromDb);
         }
         return true;
     }
-    @Override
-    public boolean acceptFriend(User user, Integer friendCandidateId) {
-        return this.changeStatusAndSave(user, friendCandidateId, 0, 1);
-    }
-    @Override
-    public boolean cancelFriendRequest(User user, Integer friendCandidateId) {
-        return this.changeStatusAndSave(user, friendCandidateId, 0, 2);
-    }
-    @Override
-    public boolean removeFriend(User user, Integer friendIdRemove){
-        return this.changeStatusAndSave(user, friendIdRemove, 1, 2);
-    }
 
     @Override
-    public List<User> getAllFriendOfUser(User user) {
-        List<Relationship> relationshipList = relationshipRepository.findAllNotCandidatesForFriends(user.getId());
+    public List<User> getFollower(String phone) {
+        User user = userRepository.findByPhone(phone).orElse(null);
+        if (user == null) {
+            return new ArrayList<>();
+        }
+        List<Relationship> relationshipList = relationshipRepository.findAllByUserTwo(user);
         List<User> users = new ArrayList<>();
         for (Relationship relationship : relationshipList) {
-            if (!relationship.getUserOne().getId().equals(user.getId())) {
-                users.add(relationship.getUserOne());
-            } else {
-                users.add(relationship.getUserTwo());
-            }
+            users.add(relationship.getUserOne());
         }
         return users;
     }
 
     @Override
-    public boolean changeStatusAndSave(User user, Integer friendId, int fromStatus, int toStatus) {
-        User friendCandidate = userRepository.findById(friendId).orElse(null);
-        if( friendCandidate == null) {
-            throw new CustomException("userDefault or friendCandidate not found");
+    public List<User> getFollowing(String phone) {
+        User user = userRepository.findByPhone(phone).orElse(null);
+        if (user == null) {
+            return new ArrayList<>();
         }
-        Relationship relationship = this.relationshipRepository
-                .findRelationshipWithFriendWithStatus(
-                        user.getId(), friendId, fromStatus);
-        relationship.setStatus(toStatus);
-        return this.relationshipRepository.save(relationship) != null;
+        List<Relationship> relationshipList = relationshipRepository.findAllByUserOne(user);
+        List<User> users = new ArrayList<>();
+        for (Relationship relationship : relationshipList) {
+            users.add(relationship.getUserTwo());
+        }
+        return users;
     }
+//    @Override
+//    public List<User> getAllFriendOfUser(String phone) {
+//        User user = userRepository.findByPhone(phone).orElse(null);
+//        List<Relationship> relationshipList = relationshipRepository.findAllNotCandidatesForFriends(user.getId());
+//        List<User> users = new ArrayList<>();
+//        for (Relationship relationship : relationshipList) {
+//            if (!relationship.getUserOne().getId().equals(user.getId())) {
+//                users.add(relationship.getUserOne());
+//            } else {
+//                users.add(relationship.getUserTwo());
+//            }
+//        }
+//        return users;
+//    }
 }

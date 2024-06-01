@@ -8,9 +8,7 @@ import java.util.List;
 
 public interface RelationshipService{
     boolean CreateRequestAddingFriend(User user, Integer friendCandidateId);
-    boolean acceptFriend(User user, Integer friendCandidateId);
-    boolean cancelFriendRequest(User user, Integer friendCandidateId);
-    boolean changeStatusAndSave(User user, Integer friendId, int fromStatus, int toStatus);
-    boolean removeFriend(User user, Integer friendIdRemove);
-    List<User> getAllFriendOfUser(User user);
+//    List<User> getAllFriendOfUser(String phone);
+    List<User> getFollower(String phone);
+    List<User> getFollowing(String phone);
 }

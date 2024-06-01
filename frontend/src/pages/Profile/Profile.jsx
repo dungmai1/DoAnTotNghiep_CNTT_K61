@@ -1,15 +1,40 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import PostService from "../../services/PostService";
 import ListPost from "../../components/ListPost/ListPost";
 import CreatePost from "../../components/CreatePost/CreatePost";
 import UserService from "../../services/UserService";
+import { useParams } from "react-router-dom";
+import RelationshipService from "../../services/RelationshipService";
+import { UserContext } from "../../context/UserContext";
 function Profile() {
   const [listPost, setListPost] = useState([]);
   const [postCount, setPostCount] = useState(0);
   const token = localStorage.getItem("accessToken");
-  const [user, setuser] = useState("");
+  const [account, setaccount] = useState("");
+  const [listFollowing, setlistFollowing] = useState([]);
+  const [listFollowers, setlistFollowers] = useState([]);
+  const { phone } = useParams();
+  
+  // const [load, setload] = useState(false);
+  // const handleLoad = () => {
+  //   setload(!load);
+  // };
+  // const handleFollow = () =>{
+  //   RelationshipService.AddFollow(token,targetId)
+  //   .then((res)=>{
+  //     alert("Sucess")
+  //   })
+  //   .catch((error)=>{
+  //     console.error("Error Add Follow",error )
+  //   })
+  // }
+
+  const user = useContext(UserContext);
+  const handleHideFollow = (user, phone) => {
+    return user ? user.phone === phone : false;
+  };
   useEffect(() => {
-    PostService.getAllPostByUser(token)
+    PostService.getAllPostsByPhone(phone)
       .then((res) => {
         setListPost(res.data);
         setPostCount(res.data.length);
@@ -17,13 +42,30 @@ function Profile() {
       .catch((error) => {
         console.error("Error fetching posts:", error);
       });
-    UserService.getUser(token)
+    UserService.getUserByPhone(phone)
       .then((res) => {
-        setuser(res.data);
+        setaccount(res.data);
       })
       .catch((error) => {
         console.error("Error get User", error);
       });
+
+    RelationshipService.Following(phone)
+      .then((res) => {
+        setlistFollowing(res.data);
+      })
+      .catch((error) => {
+        console.error("Error Follow of user", error);
+      });
+
+    RelationshipService.Followers(phone)
+      .then((res) => {
+        setlistFollowers(res.data);
+      })
+      .catch((error) => {
+        console.error("Error Follow of user", error);
+      });
+  
   }, []);
   return (
     <div id="content-page" className="content-page">
@@ -55,13 +97,13 @@ function Profile() {
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">
                       <img
-                        src={user.avatar}
+                        src={account.avatar}
                         alt="profile-img"
                         className="avatar-130 img-fluid"
                       />
                     </div>
                     <div className="profile-detail">
-                      <h3 className="">{user.displayname}</h3>
+                      <h3 className="">{account.displayname}</h3>
                     </div>
                   </div>
                   <div className="profile-info p-3 d-flex align-items-center justify-content-between position-relative">
@@ -73,12 +115,36 @@ function Profile() {
                         </li>
                         <li className="text-center ps-3">
                           <h6>Followers</h6>
-                          <p className="mb-0">206</p>
+                          <p className="mb-0">{listFollowers.length}</p>
                         </li>
                         <li className="text-center ps-3">
                           <h6>Following</h6>
-                          <p className="mb-0">100</p>
+                          <p className="mb-0">{listFollowing.length}</p>
                         </li>
+                      </ul>
+                    </div>
+                    <div class="social-links">
+                      <ul class="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
+                        {handleHideFollow(user, phone) ? <></>:
+                          <>
+                            <li className="text-center pe-3">
+                              <button
+                                type="button"
+                                className="btn mb-1 btn-primary"
+                              >
+                                <i className="fas fa-user-plus me-1"></i>Follow
+                              </button>
+                            </li>
+                            <li className="text-center pe-3">
+                              <button
+                                type="button"
+                                className="btn mb-1 btn-secondary"
+                              >
+                                <i className="fa fa-envelope me-1"></i>Chat
+                              </button>
+                            </li>
+                          </>
+                        }
                       </ul>
                     </div>
                   </div>

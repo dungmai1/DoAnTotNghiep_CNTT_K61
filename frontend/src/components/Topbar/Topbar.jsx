@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Topbar.css";
 import UserService from "../../services/UserService";
-
+import { UserContext } from "../../context/UserContext";
 export default function Topbar() {
-  const [user, setuser] = useState("");
-  const token = localStorage.getItem("accessToken");
-
   const handleSignOut = (e) =>{
     e.preventDefault();
     localStorage.removeItem('accessToken')
+    window.location.replace("http://localhost:3000/")
   }
-  useEffect(() => {
-    UserService.getUser(token)
-      .then((res) => {
-        setuser(res.data);
-      })
-      .catch((error) => {
-        console.error("Error get User", error);
-      });
-  },[]);
-
+  const user = useContext(UserContext)
   return (
     <div className="iq-top-navbar">
       <div className="iq-navbar-custom">
@@ -279,12 +268,15 @@ export default function Topbar() {
                   aria-expanded="false"
                 >
                   <img
-                    src={user.avatar}
+                    src=
+                    {user ? user.avatar:""}
                     className="img-fluid rounded-circle me-3"
                     alt="user"
                   />
                   <div className="caption">
-                    <h6 className="mb-0 line-height">{user.displayname}</h6>
+                    <h6 className="mb-0 line-height">
+                      {user ? user.displayname:""}
+                    </h6>
                   </div>
                 </a>
                 <div
