@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LoginService from "../../services/LoginService";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
       .then((res) => {
         alert("Success");
         localStorage.setItem("accessToken", res.data.token);
-        navigate("/");
+        window.location.replace("http://localhost:3000/")
       })
       .catch((error) => {
         console.error("Error Login", error);

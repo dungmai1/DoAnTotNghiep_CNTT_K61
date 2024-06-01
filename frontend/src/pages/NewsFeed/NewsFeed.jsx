@@ -5,7 +5,7 @@ import CreatePost from "../../components/CreatePost/CreatePost";
 import { listAll, ref } from "firebase/storage";
 import { imageDb } from "../../firebase/config";
 
-export default function Content() {
+export default function NewsFeed({user}) {
   const [load, setload] = useState(false);
   const [listPost, setListPost] = useState([]);
   const token = localStorage.getItem("accessToken");
@@ -27,7 +27,7 @@ export default function Content() {
         <div className="row">
           <div className="col-lg-10 mx-auto row m-0 p-0">
             <div className="col-sm-12">
-              <CreatePost handleLoad={handleLoad} />
+              <CreatePost handleLoad={handleLoad} user = {user}/>
             </div>
             {listPost.map((post) => (
               <ListPost key={post.id} post={post} />

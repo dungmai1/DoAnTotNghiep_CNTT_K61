@@ -114,4 +114,15 @@ public class PostServiceImpl implements PostService {
         return postServiceModels;
     }
 
+    @Override
+    public List<PostServiceModel> getAllPostsByPhone(String phone) {
+        User user = userRepository.findByPhone(phone).orElse(null);
+        List<Post> postList = postRepository.findAllByUser(user);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Post post : postList) {
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
+        return postServiceModels;    }
+
 }

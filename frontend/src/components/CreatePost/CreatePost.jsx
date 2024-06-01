@@ -1,24 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import PostService from "../../services/PostService";
-import {ref,uploadBytes} from "firebase/storage"
-import {v4} from "uuid"
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
 import { imageDb } from "../../firebase/config";
+import { UserContext } from "../../context/UserContext";
 
-export default function CreatePost({handleLoad}) {
+export default function CreatePost({ handleLoad}) {
   const token = localStorage.getItem("accessToken");
-  const [Img,setImg] =useState([])
+  const [Img, setImg] = useState([]);
   const [createPost, setcreatePost] = useState({
     content: "",
     imageUrl: "",
   });
+  const user = useContext(UserContext)
   const handleChange = (e) => {
     setcreatePost({ ...createPost, [e.target.name]: e.target.value });
   };
   const handleButtonClick = async (e) => {
     e.preventDefault();
-    const folderId = v4(); 
-    const uploadPromises = Img.map(file => {
+    const folderId = v4();
+    const uploadPromises = Img.map((file) => {
       const uniqueFileName = `${folderId}/${file.name}`;
       const imgRef = ref(imageDb, `dataImage/${uniqueFileName}`);
       return uploadBytes(imgRef, file).then(() => {
@@ -28,7 +30,7 @@ export default function CreatePost({handleLoad}) {
 
     try {
       await Promise.all(uploadPromises);
-      setcreatePost(prevState => ({
+      setcreatePost((prevState) => ({
         ...prevState,
         imageUrl: folderId,
       }));
@@ -39,12 +41,11 @@ export default function CreatePost({handleLoad}) {
 
       await PostService.createPost(updatedPost, token);
       alert("Success");
-      setcreatePost({imageUrl:"",content:""});
+      setcreatePost({ imageUrl: "", content: "" });
       const imageContainer = document.querySelector(".imageContainer");
       imageContainer.innerHTML = ""; // Clear any existing images
-      document.getElementById("button_exit").click()
-      handleLoad()
-
+      document.getElementById("button_exit").click();
+      handleLoad();
     } catch (error) {
       console.error("Error Create Post", error);
       console.log(createPost);
@@ -59,10 +60,10 @@ export default function CreatePost({handleLoad}) {
   const handleFileInputChange = (event) => {
     const files = Array.from(event.target.files);
     setImg(files);
-    // setcreatePost({ ...createPost, imageUrl: files.map(file => file.name) });  
+    // setcreatePost({ ...createPost, imageUrl: files.map(file => file.name) });
     const imageContainer = document.querySelector(".imageContainer");
     imageContainer.innerHTML = ""; // Clear any existing images
-  
+
     files.forEach((file, index) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -71,13 +72,13 @@ export default function CreatePost({handleLoad}) {
         imgWrapper.style.position = "relative";
         imgWrapper.style.display = "inline-block";
         imgWrapper.style.margin = "10px";
-  
+
         const img = document.createElement("img");
         img.src = reader.result;
         img.alt = "post-image";
         img.className = "img-fluid";
         img.style.width = "200px";
-  
+
         const clearButton = document.createElement("button");
         clearButton.className = "clear-button";
         clearButton.style.position = "absolute";
@@ -87,12 +88,14 @@ export default function CreatePost({handleLoad}) {
         clearButton.style.border = "none";
         clearButton.style.cursor = "pointer";
         clearButton.innerHTML = '<i className="ri-close-fill"></i>';
-  
+
         clearButton.addEventListener("click", () => {
           imgWrapper.remove();
-          const updatedFiles = Array.from(event.target.files).filter((_, i) => i !== index);
+          const updatedFiles = Array.from(event.target.files).filter(
+            (_, i) => i !== index
+          );
           const updatedFileList = new DataTransfer();
-          updatedFiles.forEach(file => updatedFileList.items.add(file));
+          updatedFiles.forEach((file) => updatedFileList.items.add(file));
           event.target.files = updatedFileList.files;
           setImg(updatedFiles);
         });
@@ -114,7 +117,8 @@ export default function CreatePost({handleLoad}) {
         <div className="d-flex align-items-center">
           <div className="user-img">
             <img
-              src="../assets/images/user/1.jpg"
+              src=
+              {user ? user.avatar:""}
               alt="userimg"
               className="avatar-50 rounded-circle"
             />
@@ -148,7 +152,7 @@ export default function CreatePost({handleLoad}) {
                 Create Post
               </h5>
               <button
-              id="button_exit"
+                id="button_exit"
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
@@ -163,7 +167,8 @@ export default function CreatePost({handleLoad}) {
               <div className="d-flex align-items-center">
                 <div className="user-img">
                   <img
-                    src="../assets/images/user/1.jpg"
+                    src=
+                    {user ? user.avatar:""}
                     alt="userimg"
                     className="avatar-60 rounded-circle img-fluid"
                   />
@@ -181,8 +186,7 @@ export default function CreatePost({handleLoad}) {
                 </form>
               </div>
               <hr />
-              <div className="imageContainer">
-              </div>
+              <div className="imageContainer"></div>
               <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
                 <li className="col-md-6 mb-3">
                   <div

@@ -30,7 +30,15 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui*/**", "/", "/v3/api-docs/**","/api/v1/auth/**").permitAll()
-                        .requestMatchers("/like/CountAllLikeForPost/**","/like/AllUserLikePost/**","/comment/CountAllCommentForPost").permitAll()
+                        .requestMatchers("/like/CountAllLikeForPost/**",
+                                "/like/AllUserLikePost/**",
+                                "/comment/CountAllCommentForPost",
+                                "/user/**",
+                                "/post/GetAllPostByPhone/**",
+                                "/relationship/allFollowOfUser/**",
+                                "/relationship/following/**",
+                                "/relationship/followers/**"
+                                    ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

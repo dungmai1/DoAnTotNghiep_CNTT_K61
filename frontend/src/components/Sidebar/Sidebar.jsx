@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
+import { UserContext } from "../../context/UserContext";
 export default function Sidebar() {
+  const user = useContext(UserContext);
   return (
     <div className="iq-sidebar  sidebar-default ">
       <div id="sidebar-scrollbar">
@@ -17,68 +19,54 @@ export default function Sidebar() {
               </NavLink>
             </li>
             <li>
+              {user ? (
+                <NavLink
+                  to={`/user/${user.phone}`}
+                  className={({ isActive }) =>
+                    isActive ? "active" : "inactive"
+                  }
+                >
+                  <i className="las la-user"></i>
+                  <span>Profile</span>
+                </NavLink>
+              ) : null}
+            </li>
+            {/* <li>
               <NavLink
-                to="/profile"
+                to=""
                 className={({ isActive }) => (isActive ? "active" : "inactive")}
               >
-                <i className="las la-user"></i>
-                <span>Profile</span>
-              </NavLink>
-            </li>
-            {/* <li class=" ">
-              <a
-                href="#mailbox"
-                data-bs-toggle="collapse"
-                class="  collapsed"
-                aria-expanded="false"
-              >
-                <i class="ri-mail-line"></i>
-                <span>Group</span>
-                <i class="ri-arrow-right-s-line iq-arrow-right"></i>
-              </a>
-              <ul
-                id="mailbox"
-                class="iq-submenu collapse"
-                data-bs-parent="#iq-sidebar-toggle"
-              >
-                <li class="">
-                  <NavLink to="/group">
-                    <i class="  ri-inbox-line"></i>Group 1
-                  </NavLink>
-                </li>
-                <li class="">
-                  <NavLink to="/group">
-                    <i class="ri-edit-line"></i>Group 2
-                  </NavLink>
-                </li>
-              </ul>
-            </li> */}
-
-            <li className=" ">
-              <a href="/group" className=" ">
                 <i className="las fa fa-shopping-cart"></i>
-                <span>Markets</span> 
-              </a>
-            </li>
-            <li className=" ">
-              <NavLink to="/search" className=" ">
+                <span>Market</span>
+              </NavLink>
+            </li> */}
+            <li>
+              <NavLink
+                to="/search"
+                className={({ isActive }) => (isActive ? "active" : "inactive")}
+              >
                 <i className="las fa fa-search"></i>
-                <span>Search</span> 
+                <span>Search</span>
               </NavLink>
             </li>
-            <li className=" ">
-              <NavLink to="/saved" className=" ">
+            <li>
+              <NavLink
+                to="/saved"
+                className={({ isActive }) => (isActive ? "active" : "inactive")}
+              >
                 <i className="las fa-solid fa-bookmark"></i>
                 <span>Saved</span>
               </NavLink>
             </li>
-            <li className=" ">
-              <a href="../app/todo.html" className=" ">
+            {/* <li >
+              <NavLink
+                href=""
+                className={({ isActive }) => (isActive ? "active" : "inactive")}
+              >
                 <i className="las fa fa-cog"></i>
-                <span>Settings</span> 
-              </a>
-            </li>
-
+                <span>Settings</span>
+              </NavLink>
+            </li> */}
           </ul>
         </nav>
         <div className="p-5"></div>

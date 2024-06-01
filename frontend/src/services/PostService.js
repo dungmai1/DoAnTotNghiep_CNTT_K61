@@ -22,5 +22,8 @@ class PostService{
             }
         });
     }
+    getAllPostsByPhone(phone){
+        return request.get(`post/GetAllPostByPhone/${phone}`)
+    }
 }
 export default new PostService();

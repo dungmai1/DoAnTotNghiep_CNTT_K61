@@ -25,4 +25,13 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+
+    @Override
+    public User findUserByPhone(String phone) {
+        User user = userRepository.findByPhone(phone).orElse(null);
+        if(user==null) {
+            throw new CustomException("User not exist with phone "+phone);
+        }
+        return user;
+    }
 }

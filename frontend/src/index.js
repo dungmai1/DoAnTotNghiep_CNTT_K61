@@ -4,64 +4,75 @@ import "./index.css";
 import App from "./App.js";
 import Home from "./pages/Home/Home.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
-import Content from "./pages/NewsFeed/NewsFeed.jsx";
-import Group from "./pages/Group/Group.jsx"
+import NewsFeed from "./pages/NewsFeed/NewsFeed.jsx";
+import Group from "./pages/Group/Group.jsx";
 import Message from "./pages/Message/Message.jsx";
-import Login from "./pages/Login/Login.jsx"
-import Register from "./pages/Register/Register.jsx"
-import Search from "./pages/Search/Search.jsx"
-import Saved from "./pages/Saved/Saved.jsx"
-
+import Login from "./pages/Login/Login.jsx";
+import Register from "./pages/Register/Register.jsx";
+import Search from "./pages/Search/Search.jsx";
+import Saved from "./pages/Saved/Saved.jsx";
+import checkAuth from "./Auth/checkAuth.js";
 import {
   createBrowserRouter,
   RouterProvider,
   Route,
-  Link
+  Link,
+  Navigate,
 } from "react-router-dom";
+import Error from "./pages/Error/Error.jsx";
+import { UserProvider } from "./context/UserContext.js";
 
-
+// const checkAuth = ()=>{
+//   return localStorage.getItem("accessToken") !== null;
+// }
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: checkAuth() ? <Home /> : <Navigate to="/login" />,
     children: [
       {
         path: "/",
-        element: <Content/>,
+        element: <NewsFeed />,
       },
       {
-        path: "profile",
-        element: <Profile/>,
+        path: "user/:phone",
+        element: <Profile />,
       },
       {
         path: "group",
-        element: <Group/>,
+        element: <Group />,
       },
       {
         path: "saved",
-        element: <Saved/>,
-      }
+        element: <Saved />,
+      },
+      {
+        path: "error",
+        element: <Error />,
+      },
+      {
+        path: "search",
+        element: <Search />,
+      },
     ],
   },
   {
     path: "message",
-    element: <Message />,
+    element: checkAuth() ? <Message /> : <Navigate to="/login" />,
   },
   {
     path: "login",
-    element: <Login/>,
+    element: checkAuth() ? <Navigate to="/" /> : <Login />,
   },
   {
     path: "register",
-    element: <Register/>,
+    element: checkAuth() ? <Navigate to="/" /> : <Register />,
   },
-  {
-    path: "search",
-    element: <Search/>,
-  }
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </React.StrictMode>
 );

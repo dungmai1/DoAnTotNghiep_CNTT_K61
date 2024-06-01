@@ -8,9 +8,11 @@ import { getDownloadURL, listAll, ref } from "firebase/storage";
 import { imageDb } from "../../firebase/config";
 import "./ListPost.css";
 import SavedService from "../../services/SavedService";
+import { Link } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 export default function ListPost({ post,handleLoad }) {
   const token = localStorage.getItem("accessToken");
-  const user = jwtDecode(token);
+  const user = useContext(UserContext)
   const [countlike, setcountlike] = useState("");
   const [comment, setcomment] = useState({
     content_cmt: "",
@@ -67,7 +69,7 @@ export default function ListPost({ post,handleLoad }) {
 
   const checkLike = () => {
     return userlikePost.some((item) => {
-      return item.phone === user.sub;
+      return item.phone === user.phone;
     });
   };
   const checkSaved = () => {
@@ -183,12 +185,12 @@ export default function ListPost({ post,handleLoad }) {
                   <div className="d-flex justify-content-between flex-wrap">
                     <div className="">
                       <h5 className="mb-0 d-inline-block">
-                        <a href="#" className="" style={{ fontSize: "15px" }}>
+                      <Link to={`/user/${post.user.phone}`} className="" style={{ fontSize: "15px" }}>
                           {post.user.displayname}
-                        </a>
+                        </Link>
                       </h5>
                       <p className="ms-1 mb-0 d-inline-block">
-                        {formatPostTime}
+                        {formatPostTime} 
                       </p>
                     </div>
                     <div className="card-post-toolbar">

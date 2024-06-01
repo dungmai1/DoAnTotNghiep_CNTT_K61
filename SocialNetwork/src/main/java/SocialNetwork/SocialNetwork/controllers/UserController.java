@@ -17,4 +17,9 @@ public class UserController {
         User user = userService.findUserByJwt(jwt);
         return user;
     }
+    @GetMapping("/{phone}")
+    public User getUserByPhone(@PathVariable String phone){
+        User user = userService.findUserByPhone(phone);
+        return user;
+    }
 }
