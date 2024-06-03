@@ -35,9 +35,7 @@ public class SecurityConfiguration {
                                 "/comment/CountAllCommentForPost",
                                 "/user/**",
                                 "/post/GetAllPostByPhone/**",
-                                "/relationship/allFollowOfUser/**",
-                                "/relationship/following/**",
-                                "/relationship/followers/**"
+                                "/relationship/**"
                                     ).permitAll()
                         .anyRequest().authenticated()
                 )

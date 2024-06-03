@@ -14,25 +14,27 @@ function Profile() {
   const [listFollowing, setlistFollowing] = useState([]);
   const [listFollowers, setlistFollowers] = useState([]);
   const { phone } = useParams();
-  
-  // const [load, setload] = useState(false);
-  // const handleLoad = () => {
-  //   setload(!load);
-  // };
-  // const handleFollow = () =>{
-  //   RelationshipService.AddFollow(token,targetId)
-  //   .then((res)=>{
-  //     alert("Sucess")
-  //   })
-  //   .catch((error)=>{
-  //     console.error("Error Add Follow",error )
-  //   })
-  // }
+  const [checkfollow, setcheckfollow] = useState();
 
   const user = useContext(UserContext);
   const handleHideFollow = (user, phone) => {
-    return user ? user.phone === phone : false;
+    return user ? user.phone === phone :  false  ;
   };
+
+  const [load, setload] = useState(false);
+
+  const handleFollow = (e)=>{
+    e.preventDefault();
+    RelationshipService.AddFollow(token,phone)
+    .then((res)=>{
+      setload(!load);
+    })
+    .catch((error)=>{
+      setload(!load);
+      console.error("Error Follow",error)
+    })
+  }
+
   useEffect(() => {
     PostService.getAllPostsByPhone(phone)
       .then((res) => {
@@ -65,8 +67,15 @@ function Profile() {
       .catch((error) => {
         console.error("Error Follow of user", error);
       });
-  
-  }, []);
+
+    RelationshipService.CheckFollow(token,phone)
+    .then((res)=>{
+      setcheckfollow(res.data)
+    })
+    .catch((error)=>{
+      console.error("Error check follow",error)
+    })
+  }, [phone,load]);
   return (
     <div id="content-page" className="content-page">
       <div className="container">
@@ -128,12 +137,22 @@ function Profile() {
                         {handleHideFollow(user, phone) ? <></>:
                           <>
                             <li className="text-center pe-3">
+                            {checkfollow ?
                               <button
                                 type="button"
                                 className="btn mb-1 btn-primary"
+                                onClick={handleFollow}
                               >
                                 <i className="fas fa-user-plus me-1"></i>Follow
                               </button>
+                                                            :
+                                                            <button
+                                                            type="button"
+                                                            className="btn mb-1 btn-primary"
+                                                            onClick={handleFollow}
+                                                          >
+                                                            Following
+                                                          </button>}
                             </li>
                             <li className="text-center pe-3">
                               <button

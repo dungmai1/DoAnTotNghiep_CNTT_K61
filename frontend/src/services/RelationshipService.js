@@ -7,8 +7,15 @@ class RelationshipService {
   Following(phone) {
     return request.get(`relationship/following/${phone}`);
   }
-  AddFollow(token, targetId) {
-    return request.post(`relationship/addFollow?friendId=${targetId}`, {
+  AddFollow(token, phone) {
+    return request.post(`relationship/addFollow/${phone}`,null ,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+  CheckFollow(token, phone) {
+    return request.get(`relationship/checkfollow/${phone}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
