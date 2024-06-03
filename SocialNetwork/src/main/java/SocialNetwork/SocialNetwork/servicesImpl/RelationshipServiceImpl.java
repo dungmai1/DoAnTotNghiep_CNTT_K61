@@ -26,8 +26,8 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean CreateRequestAddingFriend(User user, Integer friendCandidateId) throws CustomException{
-        User friendCandidate = userRepository.findById(friendCandidateId).orElse(null);
+    public boolean CreateRequestAddingFriend(User user, String phone) throws CustomException{
+        User friendCandidate = userRepository.findByPhone(phone).orElse(null);
         if( friendCandidate == null || friendCandidate == user ) {
             throw new CustomException("User not found");
         }
@@ -71,6 +71,19 @@ public class RelationshipServiceImpl implements RelationshipService {
             users.add(relationship.getUserTwo());
         }
         return users;
+    }
+
+    @Override
+    public boolean checkFollow(User user, String phone) {
+        User checkuser = userRepository.findByPhone(phone).orElse(null);
+        if(checkuser == user){
+            throw new CustomException("This user is yours");
+        }
+        Relationship relationship = relationshipRepository.findByUserOneAndUserTwo(user,checkuser);
+        if(relationship != null) {
+            return false;
+        }
+        return true;
     }
 //    @Override
 //    public List<User> getAllFriendOfUser(String phone) {

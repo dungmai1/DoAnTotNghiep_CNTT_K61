@@ -23,13 +23,13 @@ public class RelationshipController {
     private RelationshipService relationshipService;
     @Autowired
     private UserService userService;
-    @PostMapping("/addFollow")
+    @PostMapping("/addFollow/{phone}")
     public ResponseEntity<ApiResponse> addFriend(@RequestHeader("Authorization") String jwt,
-                                                 Integer friendId){
+                                                 @PathVariable String phone){
 
         try {
             User user = userService.findUserByJwt(jwt);
-            relationshipService.CreateRequestAddingFriend(user,friendId);
+            relationshipService.CreateRequestAddingFriend(user,phone);
             return new ResponseEntity<>(new ApiResponse(true, "Create Request Adding Friend Success"),HttpStatus.OK);
 
         }catch (CustomException e){
@@ -71,5 +71,11 @@ public class RelationshipController {
     public List<User> Followers(@PathVariable String phone){
         List<User> users =  relationshipService.getFollower(phone);
         return users;
+    }
+    @GetMapping("/checkfollow/{phone}")
+    public Boolean CheckFollow(@RequestHeader("Authorization") String jwt,@PathVariable String phone){
+        User user = userService.findUserByJwt(jwt);
+        boolean checkfollow = relationshipService.checkFollow(user,phone);
+        return checkfollow;
     }
 }

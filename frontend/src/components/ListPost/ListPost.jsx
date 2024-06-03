@@ -409,7 +409,7 @@ export default function ListPost({ post,handleLoad }) {
                       value={comment.content_cmt}
                       onChange={handleChange}
                     />
-                    <input
+                    {/* <input
                       id="inputfileimage"
                       type="file"
                       style={{ display: "none" }}
@@ -417,19 +417,19 @@ export default function ListPost({ post,handleLoad }) {
                       name="image"
                       value={comment.imageUrl}
                       onChange={handleChange}
-                    />
+                */}
                     <div className="comment-attagement d-flex">
                       <a href="#">
-                        <i
+                        {/* <i
                           className="ri-camera-line me-3"
                           onClick={handleFileSelect}
-                        ></i>
+                        ></i> */}
                         <i
                           onClick={handleSubmitComment}
                           className="fa fa-paper-plane me-3"
                         ></i>
                       </a>
-                    </div>
+                    </div> 
                   </form>
                 </div>
               ) : (

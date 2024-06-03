@@ -6,6 +6,7 @@ const UserContext = createContext()
 function UserProvider({children}){
     const [user, setuser] = useState(null);
     const token = localStorage.getItem("accessToken");
+    
     useEffect(() => {
       UserService.getUser(token)
         .then((res) => {
