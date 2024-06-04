@@ -19,4 +19,6 @@ public interface PostService {
     public List<PostServiceModel> GetAllSavedPost(User user);
 
     List<PostServiceModel> getAllPostsByPhone(String phone);
+
+    List<PostServiceModel> getAllPostsByImagePath(List<String> imagePaths);
 }

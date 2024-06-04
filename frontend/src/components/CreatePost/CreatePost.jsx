@@ -5,15 +5,19 @@ import { ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import { imageDb } from "../../firebase/config";
 import { UserContext } from "../../context/UserContext";
+import Yolov8 from "../../services/Yolov8";
 
-export default function CreatePost({ handleLoad}) {
+export default function CreatePost({ handleLoad }) {
   const token = localStorage.getItem("accessToken");
   const [Img, setImg] = useState([]);
   const [createPost, setcreatePost] = useState({
     content: "",
     imageUrl: "",
   });
-  const user = useContext(UserContext)
+  const [extract_vector, setextract_vector] = useState({
+    image_path: "",
+  });
+  const user = useContext(UserContext);
   const handleChange = (e) => {
     setcreatePost({ ...createPost, [e.target.name]: e.target.value });
   };
@@ -25,9 +29,9 @@ export default function CreatePost({ handleLoad}) {
       const imgRef = ref(imageDb, `dataImage/${uniqueFileName}`);
       return uploadBytes(imgRef, file).then(() => {
         console.log(`Uploaded ${file.name} to folder ${folderId}`);
+        setextract_vector({ image_path: folderId });
       });
     });
-
     try {
       await Promise.all(uploadPromises);
       setcreatePost((prevState) => ({
@@ -38,7 +42,11 @@ export default function CreatePost({ handleLoad}) {
         ...createPost,
         imageUrl: folderId,
       };
-
+      const update_extractvector ={
+        ...extract_vector,
+        image_path:folderId,
+      };
+      await Yolov8.ExtractVector(update_extractvector);
       await PostService.createPost(updatedPost, token);
       alert("Success");
       setcreatePost({ imageUrl: "", content: "" });
@@ -117,8 +125,7 @@ export default function CreatePost({ handleLoad}) {
         <div className="d-flex align-items-center">
           <div className="user-img">
             <img
-              src=
-              {user ? user.avatar:""}
+              src={user ? user.avatar : ""}
               alt="userimg"
               className="avatar-50 rounded-circle"
             />
@@ -167,8 +174,7 @@ export default function CreatePost({ handleLoad}) {
               <div className="d-flex align-items-center">
                 <div className="user-img">
                   <img
-                    src=
-                    {user ? user.avatar:""}
+                    src={user ? user.avatar : ""}
                     alt="userimg"
                     className="avatar-60 rounded-circle img-fluid"
                   />

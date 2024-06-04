@@ -123,6 +123,18 @@ public class PostServiceImpl implements PostService {
             PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
             postServiceModels.add(postServiceModel);
         }
+        return postServiceModels;
+    }
+
+    @Override
+    public List<PostServiceModel> getAllPostsByImagePath(List<String> imagePaths) {
+        List<Post> postList = postRepository.findByImageUrls(imagePaths);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Post post : postList) {
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
         return postServiceModels;    }
+
 
 }
