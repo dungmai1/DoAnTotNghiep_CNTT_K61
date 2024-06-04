@@ -84,4 +84,9 @@ public class PostController {
         List<PostServiceModel> postServiceModelList = postService.getAllPostsByPhone(phone);
         return postServiceModelList;
     }
+    @GetMapping("/GetAllPostByImagePath")
+    public List<PostServiceModel> getAllPostsByImagePath(@RequestParam List<String> imagePaths){
+        List<PostServiceModel> postServiceModelList = postService.getAllPostsByImagePath(imagePaths);
+        return postServiceModelList;
+    }
 }

@@ -13,6 +13,9 @@ class Yolov8 {
             }
         });
     }
+    ExtractVector(data){
+        return axios.post(apiUrl+"/extract_vector",data)
+    }
 }
 
 export default new Yolov8();
