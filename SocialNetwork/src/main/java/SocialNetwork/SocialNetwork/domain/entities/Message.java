@@ -1,12 +1,17 @@
 package SocialNetwork.SocialNetwork.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Table(name = "Messages")
 public class Message {
     @Id

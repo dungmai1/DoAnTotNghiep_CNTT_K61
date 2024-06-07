@@ -1,24 +1,55 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import RegisterService from "../../services/RegisterService";
+import CometChatService from "../../services/CometChatService";
 
 export default function Register() {
-  const [dataRegister,setdataRegister] = useState("")
-  const handleChange = (e) =>{
-    setdataRegister({...dataRegister,[e.target.name]:e.target.value})
-  }
-  const handleSubmit = (e) =>{
+  const [dataRegister, setdataRegister] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
+  const handleChange = (e) => {
+    setdataRegister({ ...dataRegister, [e.target.name]: e.target.value });
+  };
+  const requestData = {
+    metadata: {
+      "@private": {
+        email: dataRegister.username,
+        contactNumber: dataRegister.phone,
+      },
+    },
+    uid: dataRegister.username,
+    name: dataRegister.displayname,
+    avatar:
+      "https://cellphones.com.vn/sforum/wp-content/uploads/2024/02/avatar-anh-meo-cute-1.jpg",
+  };
+  const CometChat = async () => {
+    try {
+      const res = await CometChatService.CreateUser(requestData);
+      console.log("Create Comet Chat Success");
+    } catch (error) {
+      console.error("Error Comet Chat", error);
+    }
+  };
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    RegisterService.Register(dataRegister)
-    .then((res)=>{
-      alert("Succes")
-      console.log(dataRegister)
-    })
-    .catch((error)=>{
-      console.error("Error Register",error)
-      console.log(dataRegister)
-    })
-  }
+    if (!isChecked) {
+      alert("Please check I accept Terms and Conditions");
+      return;
+    }
+    try {
+      const res = await RegisterService.Register(dataRegister);
+      console.log("Register Success");
+      await CometChat();
+      alert("Register and Comet Chat Success");
+      window.location.replace("http://localhost:3000/login");
+    } catch (error) {
+      alert(error.response?.data?.message || "An error occurred");
+    }
+  };
+  
   return (
     <body className=" ">
       <div className="wrapper">
@@ -61,7 +92,9 @@ export default function Register() {
                           className="img-fluid mb-4"
                           alt="logo"
                         />
-                        <h4 className="mb-1 text-white">Connect with the world</h4>
+                        <h4 className="mb-1 text-white">
+                          Connect with the world
+                        </h4>
                         <p>
                           It is a long established fact that a reader will be
                           distracted by the readable content.
@@ -114,7 +147,19 @@ export default function Register() {
                         name="phone"
                         value={dataRegister.phone}
                         onChange={handleChange}
-
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label" for="exampleInputEmail2">
+                        User Name
+                      </label>
+                      <input
+                        type="username"
+                        className="form-control mb-0"
+                        placeholder="Enter User Name"
+                        name="username"
+                        value={dataRegister.username}
+                        onChange={handleChange}
                       />
                     </div>
                     <div className="form-group">
@@ -136,19 +181,23 @@ export default function Register() {
                           type="checkbox"
                           className="form-check-input"
                           id="customCheck1"
+                          checked={isChecked}
+                          onChange={handleCheckboxChange}
                         />
                         <label className="form-check-label" for="customCheck1">
                           I accept <a href="#">Terms and Conditions</a>
                         </label>
                       </div>
-                      <button type="submit" className="btn btn-primary float-end">
+                      <button
+                        type="submit"
+                        className="btn btn-primary float-end"
+                      >
                         Sign Up
                       </button>
                     </div>
                     <div className="sign-info">
                       <span className="dark-color d-inline-block line-height-2">
-                        Already Have Account ? 
-                        <Link to="/login">Log In</Link>
+                        Already Have Account ?<Link to="/login">Log In</Link>
                       </span>
                       <ul className="iq-social-media">
                         <li>

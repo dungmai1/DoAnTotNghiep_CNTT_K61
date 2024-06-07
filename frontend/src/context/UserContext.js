@@ -1,12 +1,13 @@
 import { useState,createContext, useEffect } from "react";
 import UserService from "../services/UserService";
+import { CometChatUIKit } from "@cometchat/chat-uikit-react";
 
 const UserContext = createContext()
 
 function UserProvider({children}){
     const [user, setuser] = useState(null);
     const token = localStorage.getItem("accessToken");
-    
+
     useEffect(() => {
       UserService.getUser(token)
         .then((res) => {

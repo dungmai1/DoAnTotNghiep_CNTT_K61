@@ -23,8 +23,10 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String username;
+    @Column(unique = true)
+    private String usname;
     private String displayname;
+    @Column(unique = true)
     private String phone;
     private String avatar;
     @JsonIgnore
@@ -70,4 +72,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
