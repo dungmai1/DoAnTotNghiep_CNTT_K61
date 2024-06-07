@@ -1,5 +1,6 @@
 package SocialNetwork.SocialNetwork.auth;
 
+import SocialNetwork.SocialNetwork.domain.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class LoginResponse {
     private String token;
     private String message;
+    private User user;
 }

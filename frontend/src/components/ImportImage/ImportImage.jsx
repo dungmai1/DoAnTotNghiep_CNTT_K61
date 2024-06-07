@@ -78,6 +78,20 @@ export default function ImportImage() {
             </div>
           </div>
           <div className="col-lg-7">
+          <div className="card">
+              <div className="card-header d-flex justify-content-between">
+                <div className="header-title">
+                  <h4 className="card-title">Detect</h4>
+                </div>
+              </div>
+              <div className="card-body">
+                <div className="row">
+                <div className="col-sm-10" style={{ display:"flex" }}>
+                <img src="https://i.pinimg.com/236x/db/16/7f/db167f5639b20ed2857ddd862626e24e.jpg" class="img-thumbnail" alt="Responsive image" style={{width:"20%"}}/>
+                  </div>
+                </div>
+              </div>
+            </div>
             {listPost.map((post) => (
               <ListPost post={post} />
             ))}

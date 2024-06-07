@@ -3,13 +3,21 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Topbar.css";
 import UserService from "../../services/UserService";
 import { UserContext } from "../../context/UserContext";
+import { CometChatUIKit } from "@cometchat/chat-uikit-react";
+
 export default function Topbar() {
-  const handleSignOut = (e) =>{
+
+  const handleSignOut = (e) => {
     e.preventDefault();
-    localStorage.removeItem('accessToken')
-    window.location.replace("http://localhost:3000/")
-  }
-  const user = useContext(UserContext)
+    localStorage.removeItem("accessToken");
+    CometChatUIKit.logout();
+    console.log("FFFFF");
+    window.location.replace("http://localhost:3000/");
+  };
+  const user = useContext(UserContext);
+  useEffect(() => {
+    // LoginComet(username);
+  }, []);
   return (
     <div className="iq-top-navbar">
       <div className="iq-navbar-custom">
@@ -268,14 +276,13 @@ export default function Topbar() {
                   aria-expanded="false"
                 >
                   <img
-                    src=
-                    {user ? user.avatar:""}
+                    src={user ? user.avatar : ""}
                     className="img-fluid rounded-circle me-3"
                     alt="user"
                   />
                   <div className="caption">
                     <h6 className="mb-0 line-height">
-                      {user ? user.displayname:""}
+                      {user ? user.displayname : ""}
                     </h6>
                   </div>
                 </a>
@@ -290,7 +297,8 @@ export default function Topbar() {
                           className="btn btn-primary iq-sign-btn"
                           href=""
                           role="button"
-                          onClick={handleSignOut}                       >
+                          onClick={handleSignOut}
+                        >
                           Sign out<i className="ri-login-box-line ms-2"></i>
                         </a>
                       </div>
