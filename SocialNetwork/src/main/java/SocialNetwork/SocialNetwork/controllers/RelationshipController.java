@@ -23,13 +23,13 @@ public class RelationshipController {
     private RelationshipService relationshipService;
     @Autowired
     private UserService userService;
-    @PostMapping("/addFollow/{phone}")
+    @PostMapping("/addFollow/{username}")
     public ResponseEntity<ApiResponse> addFriend(@RequestHeader("Authorization") String jwt,
-                                                 @PathVariable String phone){
+                                                 @PathVariable String username){
 
         try {
             User user = userService.findUserByJwt(jwt);
-            relationshipService.CreateRequestAddingFriend(user,phone);
+            relationshipService.CreateRequestAddingFriend(user,username);
             return new ResponseEntity<>(new ApiResponse(true, "Create Request Adding Friend Success"),HttpStatus.OK);
 
         }catch (CustomException e){
@@ -62,20 +62,20 @@ public class RelationshipController {
 //        List<User> users =  relationshipService.getAllFriendOfUser(phone);
 //        return users;
 //    }
-    @GetMapping("/following/{phone}")
-    public List<User> Following(@PathVariable String phone){
-        List<User> users =  relationshipService.getFollowing(phone);
+    @GetMapping("/following/{username}")
+    public List<User> Following(@PathVariable String username){
+        List<User> users =  relationshipService.getFollowing(username);
         return users;
     }
-    @GetMapping("/followers/{phone}")
-    public List<User> Followers(@PathVariable String phone){
-        List<User> users =  relationshipService.getFollower(phone);
+    @GetMapping("/followers/{username}")
+    public List<User> Followers(@PathVariable String username){
+        List<User> users =  relationshipService.getFollower(username);
         return users;
     }
-    @GetMapping("/checkfollow/{phone}")
-    public Boolean CheckFollow(@RequestHeader("Authorization") String jwt,@PathVariable String phone){
+    @GetMapping("/checkfollow/{username}")
+    public Boolean CheckFollow(@RequestHeader("Authorization") String jwt,@PathVariable String username){
         User user = userService.findUserByJwt(jwt);
-        boolean checkfollow = relationshipService.checkFollow(user,phone);
+        boolean checkfollow = relationshipService.checkFollow(user,username);
         return checkfollow;
     }
 }

@@ -17,7 +17,7 @@ export default function CreatePost({ handleLoad }) {
   const [extract_vector, setextract_vector] = useState({
     image_path: "",
   });
-  const user = useContext(UserContext);
+  const context = useContext(UserContext);
   const handleChange = (e) => {
     setcreatePost({ ...createPost, [e.target.name]: e.target.value });
   };
@@ -125,7 +125,7 @@ export default function CreatePost({ handleLoad }) {
         <div className="d-flex align-items-center">
           <div className="user-img">
             <img
-              src={user ? user.avatar : ""}
+              src={context.user ? context.user.avatar : ""}
               alt="userimg"
               className="avatar-50 rounded-circle"
             />
@@ -174,7 +174,7 @@ export default function CreatePost({ handleLoad }) {
               <div className="d-flex align-items-center">
                 <div className="user-img">
                   <img
-                    src={user ? user.avatar : ""}
+                    src={context.user ? context.user.avatar : ""}
                     alt="userimg"
                     className="avatar-60 rounded-circle img-fluid"
                   />

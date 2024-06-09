@@ -1,21 +1,21 @@
 import request from "./request";
 
 class RelationshipService {
-  Followers(phone) {
-    return request.get(`relationship/followers/${phone}`);
+  Followers(username) {
+    return request.get(`relationship/followers/${username}`);
   }
-  Following(phone) {
-    return request.get(`relationship/following/${phone}`);
+  Following(username) {
+    return request.get(`relationship/following/${username}`);
   }
-  AddFollow(token, phone) {
-    return request.post(`relationship/addFollow/${phone}`,null ,{
+  AddFollow(token, username) {
+    return request.post(`relationship/addFollow/${username}`,null ,{
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
   }
-  CheckFollow(token, phone) {
-    return request.get(`relationship/checkfollow/${phone}`, {
+  CheckFollow(token, username) {
+    return request.get(`relationship/checkfollow/${username}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

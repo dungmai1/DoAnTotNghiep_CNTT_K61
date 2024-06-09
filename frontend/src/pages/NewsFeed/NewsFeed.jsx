@@ -5,7 +5,7 @@ import CreatePost from "../../components/CreatePost/CreatePost";
 import { listAll, ref } from "firebase/storage";
 import { imageDb } from "../../firebase/config";
 
-export default function NewsFeed({user}) {
+export default function NewsFeed({ user }) {
   const [load, setload] = useState(false);
   const [listPost, setListPost] = useState([]);
   const token = localStorage.getItem("accessToken");
@@ -15,11 +15,16 @@ export default function NewsFeed({user}) {
   useEffect(() => {
     PostService.getAllPost(token)
       .then((res) => {
-        setListPost(res.data);
+        const sortedPosts = res.data.sort((a, b) => {
+          return new Date(b.postTime) - new Date(a.postTime);
+        });
+        setListPost(sortedPosts);
+        console.log("Arr", sortedPosts);
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
       });
+    console.log(listPost);
   }, [load]);
   return (
     <div id="content-page" className="content-page">
@@ -27,7 +32,7 @@ export default function NewsFeed({user}) {
         <div className="row">
           <div className="col-lg-10 mx-auto row m-0 p-0">
             <div className="col-sm-12">
-              <CreatePost handleLoad={handleLoad} user = {user}/>
+              <CreatePost handleLoad={handleLoad} user={user} />
             </div>
             {listPost.map((post) => (
               <ListPost key={post.id} post={post} />

@@ -79,9 +79,9 @@ public class PostController {
         List<PostServiceModel> postServiceModelList = postService.GetAllSavedPost(user);
         return postServiceModelList;
     }
-    @GetMapping("/GetAllPostByPhone/{phone}")
-    public List<PostServiceModel> getAllPostsByPhone(@PathVariable String phone){
-        List<PostServiceModel> postServiceModelList = postService.getAllPostsByPhone(phone);
+    @GetMapping("/GetAllPostByUsername/{username}")
+    public List<PostServiceModel> getAllPostsByUsername(@PathVariable String username){
+        List<PostServiceModel> postServiceModelList = postService.getAllPostsByUsername(username);
         return postServiceModelList;
     }
     @GetMapping("/GetAllPostByImagePath")

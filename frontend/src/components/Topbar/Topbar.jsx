@@ -6,7 +6,6 @@ import { UserContext } from "../../context/UserContext";
 import { CometChatUIKit } from "@cometchat/chat-uikit-react";
 
 export default function Topbar() {
-
   const handleSignOut = (e) => {
     e.preventDefault();
     localStorage.removeItem("accessToken");
@@ -14,7 +13,7 @@ export default function Topbar() {
     console.log("FFFFF");
     window.location.replace("http://localhost:3000/");
   };
-  const user = useContext(UserContext);
+  const context = useContext(UserContext);
   useEffect(() => {
     // LoginComet(username);
   }, []);
@@ -158,7 +157,11 @@ export default function Topbar() {
                   id="notification-drop"
                   data-bs-toggle="dropdown"
                 >
-                  <i className="ri-notification-4-line"></i>
+                  <i className="ri-notification-4-line position-relative">
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                      <span className="visually-hidden">Unread message</span>
+                    </span>
+                  </i>
                 </a>
                 <div
                   className="sub-drop dropdown-menu"
@@ -263,7 +266,11 @@ export default function Topbar() {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <i className="ri-mail-line"></i>
+                  <i className="ri-mail-line position-relative">
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                      <span className="visually-hidden">Unread message</span>
+                    </span>
+                  </i>
                 </Link>
               </li>
               <li className="nav-item dropdown">
@@ -276,13 +283,13 @@ export default function Topbar() {
                   aria-expanded="false"
                 >
                   <img
-                    src={user ? user.avatar : ""}
+                    src={context.user ? context.user.avatar : ""}
                     className="img-fluid rounded-circle me-3"
                     alt="user"
                   />
                   <div className="caption">
                     <h6 className="mb-0 line-height">
-                      {user ? user.displayname : ""}
+                      {context.user ? context.user.displayname : ""}
                     </h6>
                   </div>
                 </a>

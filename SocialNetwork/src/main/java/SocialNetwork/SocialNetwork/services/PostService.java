@@ -18,7 +18,7 @@ public interface PostService {
     public boolean savePost(User user, Integer postId);
     public List<PostServiceModel> GetAllSavedPost(User user);
 
-    List<PostServiceModel> getAllPostsByPhone(String phone);
+    List<PostServiceModel> getAllPostsByUsername(String username);
 
     List<PostServiceModel> getAllPostsByImagePath(List<String> imagePaths);
 }
