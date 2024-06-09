@@ -6,6 +6,7 @@ import UserService from "../../services/UserService";
 import { useParams } from "react-router-dom";
 import RelationshipService from "../../services/RelationshipService";
 import { UserContext } from "../../context/UserContext";
+
 function Profile() {
   const [listPost, setListPost] = useState([]);
   const [postCount, setPostCount] = useState(0);
@@ -13,30 +14,32 @@ function Profile() {
   const [account, setaccount] = useState("");
   const [listFollowing, setlistFollowing] = useState([]);
   const [listFollowers, setlistFollowers] = useState([]);
-  const { phone } = useParams();
+  const { username } = useParams();
   const [checkfollow, setcheckfollow] = useState();
 
-  const user = useContext(UserContext);
-  const handleHideFollow = (user, phone) => {
-    return user ? user.phone === phone :  false  ;
+  const context = useContext(UserContext);
+  const handleHideFollow = () => {
+    return context.user ? context.user.usname === username : false;
   };
 
   const [load, setload] = useState(false);
 
-  const handleFollow = (e)=>{
+  const handleFollow = (e) => {
     e.preventDefault();
-    RelationshipService.AddFollow(token,phone)
-    .then((res)=>{
-      setload(!load);
-    })
-    .catch((error)=>{
-      setload(!load);
-      console.error("Error Follow",error)
-    })
+    RelationshipService.AddFollow(token, username)
+      .then((res) => {
+        setload(!load);
+      })
+      .catch((error) => {
+        setload(!load);
+        console.error("Error Follow", error);
+      });
+  };
+  const handleUploadImage = ()=>{
+    document.getElementById("upload_image").click();
   }
-
   useEffect(() => {
-    PostService.getAllPostsByPhone(phone)
+    PostService.GetAllPostByUsername(username)
       .then((res) => {
         setListPost(res.data);
         setPostCount(res.data.length);
@@ -44,7 +47,7 @@ function Profile() {
       .catch((error) => {
         console.error("Error fetching posts:", error);
       });
-    UserService.getUserByPhone(phone)
+    UserService.getUserByUserName(username)
       .then((res) => {
         setaccount(res.data);
       })
@@ -52,7 +55,7 @@ function Profile() {
         console.error("Error get User", error);
       });
 
-    RelationshipService.Following(phone)
+    RelationshipService.Following(username)
       .then((res) => {
         setlistFollowing(res.data);
       })
@@ -60,22 +63,21 @@ function Profile() {
         console.error("Error Follow of user", error);
       });
 
-    RelationshipService.Followers(phone)
+    RelationshipService.Followers(username)
       .then((res) => {
         setlistFollowers(res.data);
       })
       .catch((error) => {
         console.error("Error Follow of user", error);
       });
-
-    RelationshipService.CheckFollow(token,phone)
-    .then((res)=>{
-      setcheckfollow(res.data)
-    })
-    .catch((error)=>{
-      console.error("Error check follow",error)
-    })
-  }, [phone,load]);
+    RelationshipService.CheckFollow(token, username)
+      .then((res) => {
+        setcheckfollow(res.data);
+      })
+      .catch((error) => {
+        console.error("Error check follow", error);
+      });
+  }, [username, load]);
   return (
     <div id="content-page" className="content-page">
       <div className="container">
@@ -90,18 +92,6 @@ function Profile() {
                       alt="profile-bg"
                       className="rounded img-fluid"
                     />
-                    <ul className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0">
-                      <li>
-                        <a href="#">
-                          <i className="ri-pencil-line"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i className="ri-settings-4-line"></i>
-                        </a>
-                      </li>
-                    </ul>
                   </div>
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">
@@ -109,7 +99,7 @@ function Profile() {
                         src={account.avatar}
                         alt="profile-img"
                         className="avatar-130 img-fluid"
-                      />
+                      ></img>
                     </div>
                     <div className="profile-detail">
                       <h3 className="">{account.displayname}</h3>
@@ -134,25 +124,121 @@ function Profile() {
                     </div>
                     <div class="social-links">
                       <ul class="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
-                        {handleHideFollow(user, phone) ? <></>:
+                        {handleHideFollow() ? (
+                          <>
+                            <li className="text-center ms-auto">
+                              <a
+                                href=""
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal"
+                              >
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                              </a>
+                            </li>
+                            <div
+                              class="modal fade"
+                              id="exampleModal"
+                              tabindex="-1"
+                              aria-labelledby="exampleModalLabel"
+                              aria-hidden="true"
+                            >
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title"
+                                      id="exampleModalLabel"
+                                    >
+                                      Edit Profile
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="btn-close"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                    ></button>
+                                  </div>
+                                  <form>
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label class="form-label">
+                                        DisplayName:
+                                      </label>
+                                      <input
+                                        type="displayname"
+                                        class="form-control"
+                                        name="displayname"
+                                        placeholder="Display Name"
+                                        value={account.displayname}
+                                      />
+                                      <nav onClick={handleUploadImage}>
+                                        <input                                          
+                                          type="file"
+                                          id="upload_image"
+                                          style={{ display: "none" }}
+                                          accept="image/*"
+                                          name="image"
+                                          value={account.image}  
+                                        />
+                                        <div
+                                          class="nav nav-pills nav-fill stepwizard-row"
+                                          id="nav-tab"
+                                          role="tablist"
+                                        >
+                                          <a
+                                            class="nav-link btn"
+                                            id="bank-tab"
+                                            data-toggle="tab"
+                                            href="#bank-detail"
+                                          >
+                                            <i class="ri-camera-fill bg-soft-success text-success"></i>
+                                            <span>Upload Image</span>
+                                          </a>
+                                        </div>
+                                      </nav>
+                                    </div>
+                                  </div>
+                                  </form>
+                                  <div class="modal-footer">
+                                    <button
+                                      type="button"
+                                      class="btn btn-secondary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Close
+                                    </button>
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                    >
+                                      Save changes
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
                           <>
                             <li className="text-center pe-3">
-                            {checkfollow ?
-                              <button
-                                type="button"
-                                className="btn mb-1 btn-primary"
-                                onClick={handleFollow}
-                              >
-                                <i className="fas fa-user-plus me-1"></i>Follow
-                              </button>
-                                                            :
-                                                            <button
-                                                            type="button"
-                                                            className="btn mb-1 btn-primary"
-                                                            onClick={handleFollow}
-                                                          >
-                                                            Following
-                                                          </button>}
+                              {checkfollow ? (
+                                <button
+                                  type="button"
+                                  className="btn mb-1 btn-primary"
+                                  onClick={handleFollow}
+                                >
+                                  <i className="fas fa-user-plus me-1"></i>
+                                  Follow
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className="btn mb-1 btn-primary"
+                                  onClick={handleFollow}
+                                >
+                                  Following
+                                </button>
+                              )}
                             </li>
                             <li className="text-center pe-3">
                               <button
@@ -163,7 +249,7 @@ function Profile() {
                               </button>
                             </li>
                           </>
-                        }
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -181,7 +267,8 @@ function Profile() {
                 <div className="card-body p-0">
                   <div className="row">
                     <div className="col-lg-8 mx-auto">
-                      <CreatePost />
+                      {handleHideFollow() ? <CreatePost /> : <></>}
+
                       {listPost.map((post) => (
                         <ListPost key={post.id} post={post} />
                       ))}

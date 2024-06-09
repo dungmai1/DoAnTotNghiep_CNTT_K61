@@ -22,8 +22,8 @@ class PostService {
       },
     });
   }
-  getAllPostsByPhone(phone) {
-    return request.get(`post/GetAllPostByPhone/${phone}`);
+  GetAllPostByUsername(username) {
+    return request.get(`post/GetAllPostByUsername/${username}`);
   }
   getAllPostsByImagePaths(imagePaths, token) {
     const queryParams = imagePaths.join("&imagePaths=");

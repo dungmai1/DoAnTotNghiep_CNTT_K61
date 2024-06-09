@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import { UserContext } from "../../context/UserContext";
 export default function Sidebar() {
-  const user = useContext(UserContext);
+  const username = localStorage.getItem("username")
   return (
     <div className="iq-sidebar  sidebar-default ">
       <div id="sidebar-scrollbar">
@@ -19,9 +19,9 @@ export default function Sidebar() {
               </NavLink>
             </li>
             <li>
-              {user ? (
+              {username ? (
                 <NavLink
-                  to={`/user/${user.phone}`}
+                  to={`/user/${username}`}
                   className={({ isActive }) =>
                     isActive ? "active" : "inactive"
                   }

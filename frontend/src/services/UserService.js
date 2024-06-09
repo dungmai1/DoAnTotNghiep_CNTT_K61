@@ -1,8 +1,8 @@
 import request from './request'
 
 class UserService{
-    getUserByPhone(phone){
-        return request.get(`user/${phone}`)
+    getUserByUserName(username){
+        return request.get(`user/${username}`)
     }
     getUser(token){
         return request.get("user/",{

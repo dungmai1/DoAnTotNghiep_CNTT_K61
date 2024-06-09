@@ -21,7 +21,7 @@ import ScrollToTop from "./router/ScrollToTop.js";
 
 import { UIKitSettingsBuilder } from "@cometchat/uikit-shared";
 import { CometChatUIKit } from "@cometchat/chat-uikit-react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const COMETCHAT_CONSTANTS = {
   APP_ID: "25887692c8a6c11f", //Replace with your App ID
@@ -43,10 +43,7 @@ CometChatUIKit.init(UIKitSettings)
     console.log("Initialization completed successfully");
   })
   .catch(console.log);
-
 function App() {
-  useEffect(() => {
-  }, []);
   return (
     <UserProvider>
       <Router>
@@ -57,7 +54,7 @@ function App() {
             element={checkAuth() ? <Home /> : <Navigate to="/login" />}
           >
             <Route path="/" element={<NewsFeed />} />
-            <Route path="user/:phone" element={<Profile />} />
+            <Route path="user/:username" element={<Profile />} />
             <Route path="group" element={<Group />} />
             <Route path="saved" element={<Saved />} />
             <Route path="error" element={<Error />} />

@@ -5,39 +5,77 @@ import { FileUploader } from "react-drag-drop-files";
 import ListPost from "../ListPost/ListPost";
 import Yolov8 from "../../services/Yolov8";
 import PostService from "../../services/PostService";
+import "./ImportImage.css";
 
 const fileTypes = ["JPEG", "PNG", "GIF", "JPG"];
 
 export default function ImportImage() {
   const [listPost, setListPost] = useState([]);
-  const [imagePaths, setimagePaths] = useState([]);
   const token = localStorage.getItem("accessToken");
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    Yolov8.predict(fileName)
-      .then((res) => {
-        const predictedImagePaths = res.data;
-        setimagePaths(predictedImagePaths); 
-        console.log("FolderId", res.data);
-        PostService.getAllPostsByImagePaths(predictedImagePaths, token)
-          .then((res) => {
-            setListPost(res.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching posts:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error", error);
-      });
-  };
+  const [imagedetect, setimagedetect] = useState([]);
+  const [listPath, setlistPath] = useState([]);
   const [file, setFile] = useState(null);
   const [fileName, setfileName] = useState(null);
+  const [load, setload] = useState(false);
+  const [loading, setLoading] = useState();
+
+  useEffect(() => {
+    if (listPath && listPath.length > 0) {
+      LoadImageRetrieval();
+    }
+  }, [listPath]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (fileName) {
+          await Yolov8.predict(fileName).then((res) => {
+            console.log("1");
+            setimagedetect(null);
+            console.log("2");
+            const updateImageDetect = res.data;
+            console.log("imeg", res.data);
+            setimagedetect(updateImageDetect);
+          });
+          await image_retrieval();
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [load]);
+
+  const image_retrieval = async (id) => {
+    await Yolov8.imageRetrieval(id)
+      .then((res) => {
+        setlistPath(res.data);
+        console.log("Data", res.data);
+      })
+      .catch((err) => {
+        console.error("Error image retrieval", err);
+      });
+  };
+  const LoadImageRetrieval = async () => {
+    try {
+      const res = await PostService.getAllPostsByImagePaths(listPath, token);
+      setListPost(res.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setload(!load);
+    setLoading(true)
+  };
+
   const handleChange = (e) => {
     setFile(URL.createObjectURL(e.target.files[0]));
     setfileName(e.target.files[0]);
-    setimagePaths([])
-    setListPost([])
+    setListPost([]);
+    setimagedetect(null);
   };
   return (
     <div id="content-page" className="content-page">
@@ -62,12 +100,16 @@ export default function ImportImage() {
                       Search
                     </a>
                   </div>
-                  <img
-                    src={file}
-                    alt="gallary-image"
-                    className="img-fluid rounded"
-                    style={{ border: "2px dashed #000" }}
-                  />
+                  {file ? (
+                    <img
+                      src={file}
+                      alt="gallary-image"
+                      className="img-fluid rounded"
+                      style={{ border: "2px dashed #000" }}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
               <div className="card-header d-flex justify-content-between">
@@ -78,23 +120,40 @@ export default function ImportImage() {
             </div>
           </div>
           <div className="col-lg-7">
-          <div className="card">
-              <div className="card-header d-flex justify-content-between">
-                <div className="header-title">
-                  <h4 className="card-title">Detect</h4>
-                </div>
-              </div>
+            <div className="card">
               <div className="card-body">
                 <div className="row">
-                <div className="col-sm-10" style={{ display:"flex" }}>
-                <img src="https://i.pinimg.com/236x/db/16/7f/db167f5639b20ed2857ddd862626e24e.jpg" class="img-thumbnail" alt="Responsive image" style={{width:"20%"}}/>
+                  <div className="col-sm-10" style={{ display: "flex" }}>
+                    {imagedetect ? (
+                      imagedetect.map((img, index) => (
+                        <>
+                          <img
+                            key={index}
+                            src={"http://127.0.0.1:6868/" + img.path}
+                            className="img-thumbnail"
+                            alt="Responsive image"
+                            style={{ width: "15%" }}
+                            onClick={() => image_retrieval(index)}
+                          />
+                          <div>{img.label_name}</div>
+                        </>
+                      ))
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-            {listPost.map((post) => (
-              <ListPost post={post} />
-            ))}
+            <>
+              {loading ? (
+                <p>Loading...</p>
+              ) : listPost.length > 0 ? (
+                listPost.map((post) => <ListPost key={post.id} post={post} />)
+              ) : (
+                <p>No posts found.</p>
+              )}
+            </>
           </div>
         </div>
       </div>

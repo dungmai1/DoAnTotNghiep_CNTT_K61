@@ -2,3 +2,9 @@
     position:fixed;
     height: 75px;
 }
+.notification-badge {
+    width: 15px; /* chỉnh sửa chiều rộng theo ý bạn */
+    height: 15px; /* chỉnh sửa chiều cao theo ý bạn */
+    padding: 4px; /* chỉnh sửa khoảng đệm theo ý bạn */
+}
+  

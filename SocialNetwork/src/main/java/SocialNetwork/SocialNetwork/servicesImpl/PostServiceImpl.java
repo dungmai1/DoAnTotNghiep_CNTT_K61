@@ -115,8 +115,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostServiceModel> getAllPostsByPhone(String phone) {
-        User user = userRepository.findByPhone(phone).orElse(null);
+    public List<PostServiceModel> getAllPostsByUsername(String username) {
+        User user = userRepository.findByUsname(username).orElse(null);
         List<Post> postList = postRepository.findAllByUser(user);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Post post : postList) {

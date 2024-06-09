@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 export default function ListPost({ post,handleLoad }) {
   const token = localStorage.getItem("accessToken");
-  const user = useContext(UserContext)
+  const context = useContext(UserContext)
   const [countlike, setcountlike] = useState("");
   const [comment, setcomment] = useState({
     content_cmt: "",
@@ -69,7 +69,7 @@ export default function ListPost({ post,handleLoad }) {
 
   const checkLike = () => {
     return userlikePost.some((item) => {
-      return item.phone === user.phone;
+      return item.phone === context.user.phone;
     });
   };
   const checkSaved = () => {
@@ -120,7 +120,6 @@ export default function ListPost({ post,handleLoad }) {
         console.error("Error Add Like", error);
       });
   };
-
   useEffect(() => {
     LikeService.AllUserLikePost(post.id)
       .then((res) => {
@@ -185,7 +184,7 @@ export default function ListPost({ post,handleLoad }) {
                   <div className="d-flex justify-content-between flex-wrap">
                     <div className="">
                       <h5 className="mb-0 d-inline-block">
-                      <Link to={`/user/${post.user.phone}`} className="" style={{ fontSize: "15px" }}>
+                      <Link to={`/user/${post.user.usname}`} className="" style={{ fontSize: "15px" }}>
                           {post.user.displayname}
                         </Link>
                       </h5>

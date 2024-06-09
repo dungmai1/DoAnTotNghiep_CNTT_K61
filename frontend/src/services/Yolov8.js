@@ -16,6 +16,9 @@ class Yolov8 {
     ExtractVector(data){
         return axios.post(apiUrl+"/extract_vector",data)
     }
+    imageRetrieval(id_detect){
+        return axios.get(apiUrl+`/image_retrieval?path=${id_detect}`)
+    }
 }
 
 export default new Yolov8();
