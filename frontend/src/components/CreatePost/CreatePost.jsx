@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 import { imageDb } from "../../firebase/config";
 import { UserContext } from "../../context/UserContext";
 import Yolov8 from "../../services/Yolov8";
+import { Avatar } from "@chakra-ui/react";
 
 export default function CreatePost({ handleLoad }) {
   const token = localStorage.getItem("accessToken");
@@ -123,13 +124,10 @@ export default function CreatePost({ handleLoad }) {
         </div> */}
       <div className="card-body">
         <div className="d-flex align-items-center">
-          <div className="user-img">
-            <img
+            <Avatar
               src={context.user ? context.user.avatar : ""}
               alt="userimg"
-              className="avatar-50 rounded-circle"
             />
-          </div>
           <form
             className="post-text ms-3 w-100"
             data-bs-toggle="modal"
@@ -172,13 +170,10 @@ export default function CreatePost({ handleLoad }) {
               style={{ maxHeight: "500px" }}
             >
               <div className="d-flex align-items-center">
-                <div className="user-img">
-                  <img
+                  <Avatar
                     src={context.user ? context.user.avatar : ""}
                     alt="userimg"
-                    className="avatar-60 rounded-circle img-fluid"
                   />
-                </div>
                 <form ref={formRef} className="post-text ms-3 w-100">
                   <input
                     type="text"

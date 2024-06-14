@@ -1,32 +1,68 @@
-import React, { useContext, useEffect, useState  } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Topbar from "../../components/Topbar/Topbar";
 import "../Message/Message.css";
-import {
-  CometChatConversationsWithMessages,
-  CometChatThemeContext,
-} from "@cometchat/chat-uikit-react";
-export default function Message() {
-  let { theme } = useContext(CometChatThemeContext);
 
-  theme.palette.setMode("light");
-  theme.palette.setPrimary({ light: "#6851D6", dark: "#6851D6" });
-  theme.palette.setAccent({ light: "#6851D6", dark: "#6851D6" });
+import { CometChat } from "@cometchat/chat-sdk-javascript";
+import {
+  BadgeStyle,
+  CometChatBadge,
+  CometChatConversations,
+  CometChatConversationsWithMessages,
+  CometChatMessages,
+  CometChatThemeContext,
+  CometChatUsers,
+  CometChatUsersWithMessages,
+  ConversationsConfiguration,
+  ConversationsStyle,
+  ListItemStyle,
+} from "@cometchat/chat-uikit-react";
+import { useNavigate, useParams } from "react-router-dom";
+export default function Message() {
+  const navigate = useNavigate();
+  const { username } = useParams();
+  const [user, setUser] = useState(null);
+  const [load, setload] = useState(false);
+
+  useEffect(() => {
+    if (username) {
+      const getUser = async () => {
+        const user = await CometChat.getUser(username);
+        setUser(user);
+      };
+      getUser();
+    }
+  }, [load]);
+  const handleOnItemClick = (item) => {
+    navigate(`/message/${item.conversationWith.uid}`);
+    setload(!load);
+    // CometChat.getUser(item.conversationWith.uid).then((user) => {
+    //   setUser(user)
+    // })
+  };
   return (
     <>
       <Topbar />
       <div
         style={{
-          marginTop: "80px",
+          marginTop: "75px",
         }}
       >
-        <div className="App" style={{ overflow: "hidden", height: "88vh" }}>
+        <div
+          className="conversations"
+          style={{ width: "100%", height: "100%" }}
+        >
           <>
-            <CometChatThemeContext.Provider value={{ theme }}>
-              <CometChatConversationsWithMessages />
-            </CometChatThemeContext.Provider>
+            <div style={{ display: "flex" }}>
+              <div style={{ width: "20%" }}>
+                <CometChatConversations onItemClick={handleOnItemClick} />
+              </div>
+              <div style={{ width: "80%", overflow: "auto", height: "620px" }}>
+                {user ? <CometChatMessages user={user} /> : <></>}
+              </div>
+            </div>
           </>
         </div>
       </div>
-    </>
+      </>
   );
 }

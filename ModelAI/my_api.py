@@ -77,7 +77,7 @@ def image_retrieval(image_path):
     filtered_indices = np.where((distance >= 0) & (distance <= 1))[0]
     filtered_distances = distance[filtered_indices]
 
-    print(f"Number of vectors within the distance range 0-1.5: {len(filtered_distances)}")
+    print(f"Number of vectors within the distance range 0-1: {len(filtered_distances)}")
 
     # Sort the filtered distances and get the indices
     sorted_indices = np.argsort(filtered_distances)

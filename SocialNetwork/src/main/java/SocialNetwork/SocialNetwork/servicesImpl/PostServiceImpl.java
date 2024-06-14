@@ -1,13 +1,11 @@
 package SocialNetwork.SocialNetwork.servicesImpl;
 
-import SocialNetwork.SocialNetwork.domain.entities.Like;
-import SocialNetwork.SocialNetwork.domain.entities.Saved;
-import SocialNetwork.SocialNetwork.domain.entities.User;
+import SocialNetwork.SocialNetwork.domain.entities.*;
 import SocialNetwork.SocialNetwork.domain.models.bindingModels.PostCreateBindingModel;
-import SocialNetwork.SocialNetwork.domain.entities.Post;
 import SocialNetwork.SocialNetwork.domain.models.serviceModels.PostServiceModel;
 import SocialNetwork.SocialNetwork.exception.CustomException;
 import SocialNetwork.SocialNetwork.repositories.PostRepository;
+import SocialNetwork.SocialNetwork.repositories.RelationshipRepository;
 import SocialNetwork.SocialNetwork.repositories.SavedRepository;
 import SocialNetwork.SocialNetwork.repositories.UserRepository;
 import SocialNetwork.SocialNetwork.services.PostService;
@@ -26,15 +24,19 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final SavedRepository savedRepository;
+    private final RelationshipRepository relationshipRepository;
     private final ModelMapper modelMapper;
-
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, SavedRepository savedRepository, ModelMapper modelMapper) {
+
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, SavedRepository savedRepository, RelationshipRepository relationshipRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.savedRepository = savedRepository;
+        this.relationshipRepository = relationshipRepository;
         this.modelMapper = modelMapper;
     }
+
+
     @Override
     public boolean createPost(PostCreateBindingModel postCreateBindingModel, User user) {
         PostServiceModel postServiceModel = new PostServiceModel();
@@ -136,5 +138,23 @@ public class PostServiceImpl implements PostService {
         }
         return postServiceModels;    }
 
+    @Override
+    public List<PostServiceModel> GetAllPostByFollowing(String username) {
+        User user = userRepository.findByUsname(username).orElse(null);
+        if (user == null) {
+            return new ArrayList<>(); // Return an empty list if user is not found
+        }
+        List<Relationship> relationshipList = relationshipRepository.findAllByUserOne(user);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Relationship relationship : relationshipList) {
+            List<Post> postList = postRepository.findAllByUser(relationship.getUserTwo());
+            for (Post post : postList) {
+                PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+                postServiceModels.add(postServiceModel);
+            }
+        }
+
+        return postServiceModels;
+    }
 
 }

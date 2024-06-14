@@ -33,5 +33,12 @@ class PostService {
       },
     });
   }
+  GetAllPostByFollowing(token, username) {
+    return request.get(`post/GetAllPostByFollowing/${username}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 }
 export default new PostService();
