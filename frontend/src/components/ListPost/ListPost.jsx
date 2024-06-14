@@ -10,9 +10,17 @@ import "./ListPost.css";
 import SavedService from "../../services/SavedService";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-export default function ListPost({ post,handleLoad }) {
+import { tippy } from "@tippyjs/react";
+import "tippy.js/dist/tippy.css"; // optional
+import Tippy from "@tippyjs/react";
+import ToolTipUser from "../ToolTipUser/ToolTipUser";
+import "tippy.js/themes/light.css";
+import { FaSave } from "react-icons/fa";
+import { Center, Flex } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
+export default function ListPost({ post, handleLoad }) {
   const token = localStorage.getItem("accessToken");
-  const context = useContext(UserContext)
+  const context = useContext(UserContext);
   const [countlike, setcountlike] = useState("");
   const [comment, setcomment] = useState({
     content_cmt: "",
@@ -24,7 +32,6 @@ export default function ListPost({ post,handleLoad }) {
   const [commentlist, setcommentlist] = useState([]);
   const [imgUrls, setimgUrls] = useState([]);
   const [checkSavePost, setcheckSavePost] = useState([]);
-
   const [load, setload] = useState(false);
   const PostTime = formatDistanceToNow(
     post.postTime,
@@ -33,6 +40,17 @@ export default function ListPost({ post,handleLoad }) {
       addSuffix: true,
     }
   );
+  const toast = useToast();
+  const toastIdRef = React.useRef();
+
+  const addToast = (text) => {
+    toastIdRef.current = toast({
+      title: text,
+      status: 'success',
+      variant:'top-accent',
+    });
+  };
+
   const formatPostTime = PostTime.replace(" giây", "s")
     .replace(" phút", "m")
     .replace(" giờ", "h")
@@ -47,7 +65,6 @@ export default function ListPost({ post,handleLoad }) {
   const handleCommentToggle = () => {
     setshowcomment(!showcomment);
   };
-
 
   const formatDate = (time) => {
     const defaultTime = formatDistanceToNow(time, {
@@ -77,19 +94,22 @@ export default function ListPost({ post,handleLoad }) {
       return item.id === post.id;
     });
   };
-  const handleSavePost = (e)=>{
+  const handleSavePost = (e) => {
     e.preventDefault();
-    SavedService.CreateSavedPost(post.id,token)
-    .then((res)=>{
-      setload(!load);
-      handleLoad();
-    })
-    .catch((error)=>{
-      console.error("Error Save Post",error)
-    })
-  }
-  const handleFileSelect = () => {
-    document.getElementById("inputfileimage").click();
+    const isSaved = checkSaved();
+    if (isSaved) {
+      addToast('UnSaved');
+    } else {
+      addToast('Saved');
+    }
+    SavedService.CreateSavedPost(post.id, token)
+      .then((res) => {
+        setload(!load);
+        handleLoad();
+      })
+      .catch((error) => {
+        console.error("Error Save Post", error);
+      });
   };
   const handleChange = (e) => {
     setcomment({
@@ -183,13 +203,24 @@ export default function ListPost({ post,handleLoad }) {
                 <div className="w-100">
                   <div className="d-flex justify-content-between flex-wrap">
                     <div className="">
-                      <h5 className="mb-0 d-inline-block">
-                      <Link to={`/user/${post.user.usname}`} className="" style={{ fontSize: "15px" }}>
-                          {post.user.displayname}
-                        </Link>
-                      </h5>
+                      <Tippy
+                        content={<ToolTipUser post={post} />}
+                        placement="bottom"
+                        interactive="true"
+                        theme="light"
+                      >
+                        <h5 className="mb-0 d-inline-block avatarToolTip">
+                          <Link
+                            to={`/user/${post.user.usname}`}
+                            className=""
+                            style={{ fontSize: "15px" }}
+                          >
+                            {post.user.displayname}
+                          </Link>
+                        </h5>
+                      </Tippy>
                       <p className="ms-1 mb-0 d-inline-block">
-                        {formatPostTime} 
+                        {formatPostTime}
                       </p>
                     </div>
                     <div className="card-post-toolbar">
@@ -205,23 +236,45 @@ export default function ListPost({ post,handleLoad }) {
                         </span>
                         <div className="dropdown-menu m-0 p-0">
                           {checkSaved() ? (
-                            <a className="dropdown-item p-3" href="" onClick={handleSavePost}>
-                              <div className="d-flex align-items-top">
-                                <i className="ri-save-line h4"></i>
-                                <div className="data ms-2">
-                                  <h6>UnSave</h6>
-                                </div>
-                              </div>
-                            </a>
+                            <Center
+                              className="dropdown-item p-1"
+                              href=""
+                              onClick={handleSavePost}
+                            >
+                              <Flex
+                                justifyContent="center"
+                                flexDir="row"
+                                alignItems="center"
+                              >
+                                <h6>UnSaved</h6>
+                                <FaSave
+                                  style={{
+                                    marginLeft: "50px",
+                                    fontSize: "20px",
+                                  }}
+                                />
+                              </Flex>
+                            </Center>
                           ) : (
-                            <a className="dropdown-item p-3" href="" onClick={handleSavePost}>
-                            <div className="d-flex align-items-top">
-                              <i className="ri-save-line h4"></i>
-                              <div className="data ms-2">
+                            <Center
+                              className="dropdown-item p-2"
+                              href=""
+                              onClick={handleSavePost}
+                            >
+                              <Flex
+                                justifyContent="center"
+                                flexDir="row"
+                                alignItems="center"
+                              >
                                 <h6>Save</h6>
-                              </div>
-                            </div>
-                          </a>
+                                <FaSave
+                                  style={{
+                                    marginLeft: "50px",
+                                    fontSize: "20px",
+                                  }}
+                                />
+                              </Flex>
+                            </Center>
                           )}
                           {/* <a className="dropdown-item p-3" href="#">
                             <div className="d-flex align-items-top">
@@ -279,10 +332,7 @@ export default function ListPost({ post,handleLoad }) {
                     </div>
                     <div className="total-like-block ms-2 me-3">
                       <div className="dropdown">
-                        <span
-                        >
-                          {countlike}
-                        </span>
+                        <span>{countlike}</span>
                         {/* <div className="dropdown-menu">
                           {userlikePost.map((userlikePost) => (
                             <a className="dropdown-item" href="#">
@@ -428,7 +478,7 @@ export default function ListPost({ post,handleLoad }) {
                           className="fa fa-paper-plane me-3"
                         ></i>
                       </a>
-                    </div> 
+                    </div>
                   </form>
                 </div>
               ) : (

@@ -24,6 +24,7 @@ export default function ImportImage() {
       LoadImageRetrieval();
     }
   }, [listPath]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,6 +47,7 @@ export default function ImportImage() {
   }, [load]);
 
   const image_retrieval = async (id) => {
+    setLoading(true)
     await Yolov8.imageRetrieval(id)
       .then((res) => {
         setlistPath(res.data);
@@ -53,6 +55,9 @@ export default function ImportImage() {
       })
       .catch((err) => {
         console.error("Error image retrieval", err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   const LoadImageRetrieval = async () => {
@@ -61,14 +66,12 @@ export default function ImportImage() {
       setListPost(res.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
-    } finally {
-      setLoading(false);
     }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
     setload(!load);
-    setLoading(true)
+    setLoading(true);
   };
 
   const handleChange = (e) => {
@@ -147,8 +150,12 @@ export default function ImportImage() {
             </div>
             <>
               {loading ? (
-                <p>Loading...</p>
-              ) : listPost.length > 0 ? (
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : listPost && listPost.length > 0 ? (
                 listPost.map((post) => <ListPost key={post.id} post={post} />)
               ) : (
                 <p>No posts found.</p>

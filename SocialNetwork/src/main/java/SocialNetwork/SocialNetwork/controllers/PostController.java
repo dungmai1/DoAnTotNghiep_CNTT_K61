@@ -89,4 +89,9 @@ public class PostController {
         List<PostServiceModel> postServiceModelList = postService.getAllPostsByImagePath(imagePaths);
         return postServiceModelList;
     }
+    @GetMapping("/GetAllPostByFollowing/{username}")
+    public List<PostServiceModel> GetAllPostByFollowing(@PathVariable String username){
+        List<PostServiceModel> postServiceModelList = postService.GetAllPostByFollowing(username);
+        return postServiceModelList;
+    }
 }

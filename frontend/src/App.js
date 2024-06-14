@@ -6,6 +6,9 @@ import {
   Route,
 } from "react-router-dom";
 import Home from "./pages/Home/Home.jsx";
+import Hs from "./pages/Home/Hs.jsx";
+
+
 import Profile from "./pages/Profile/Profile.jsx";
 import NewsFeed from "./pages/NewsFeed/NewsFeed.jsx";
 import Group from "./pages/Group/Group.jsx";
@@ -20,8 +23,13 @@ import { UserProvider } from "./context/UserContext.js";
 import ScrollToTop from "./router/ScrollToTop.js";
 
 import { UIKitSettingsBuilder } from "@cometchat/uikit-shared";
-import { CometChatUIKit } from "@cometchat/chat-uikit-react";
+import {
+  CometChatConversationsWithMessages,
+  CometChatUIKit,
+} from "@cometchat/chat-uikit-react";
 import React, { useEffect, useState } from "react";
+import SearchUser from "./pages/SearchUser/SearchUser.jsx";
+import PostFollowing from "./pages/PostFollowing/PostFollowing.jsx";
 
 const COMETCHAT_CONSTANTS = {
   APP_ID: "25887692c8a6c11f", //Replace with your App ID
@@ -57,12 +65,24 @@ function App() {
             <Route path="user/:username" element={<Profile />} />
             <Route path="group" element={<Group />} />
             <Route path="saved" element={<Saved />} />
+            <Route path="postfollowing" element={<PostFollowing />} />
             <Route path="error" element={<Error />} />
             <Route path="search" element={<Search />} />
+            <Route path="searchUser" element={<SearchUser />} />
           </Route>
           <Route
-            path="message"
+            path="message/:username"
             element={checkAuth() ? <Message /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="message"
+            element={
+              checkAuth() ? (
+                <Message />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
           <Route
             path="login"
@@ -71,6 +91,16 @@ function App() {
           <Route
             path="register"
             element={checkAuth() ? <Navigate to="/" /> : <Register />}
+          />
+          <Route
+            path="hs"
+            element={
+              checkAuth() ? (
+                <Hs/>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
         </Routes>
       </Router>

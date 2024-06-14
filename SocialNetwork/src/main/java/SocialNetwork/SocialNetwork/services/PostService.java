@@ -21,4 +21,6 @@ public interface PostService {
     List<PostServiceModel> getAllPostsByUsername(String username);
 
     List<PostServiceModel> getAllPostsByImagePath(List<String> imagePaths);
+
+    List<PostServiceModel> GetAllPostByFollowing(String username);
 }

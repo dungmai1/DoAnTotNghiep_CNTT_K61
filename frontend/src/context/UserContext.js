@@ -2,13 +2,15 @@ import { useState, createContext, useEffect } from "react";
 import UserService from "../services/UserService";
 import { CometChatUIKit } from "@cometchat/chat-uikit-react";
 import { CometChat } from "@cometchat/chat-sdk-javascript";
+import { json } from "react-router-dom";
+import PostService from "../services/PostService";
 
 const UserContext = createContext();
 
 function UserProvider({ children }) {
   const [user, setuser] = useState(null);
   const token = localStorage.getItem("accessToken");
-
+  const username = localStorage.getItem("username");
   useEffect(() => {
     UserService.getUser(token)
       .then((res) => {
@@ -36,26 +38,9 @@ function UserProvider({ children }) {
     };
   }, [SendToMe]);
 
-  const [unreadCount, setUnreadCount] = useState(0);
-  // useEffect(() => {
-  //   const UID = localStorage.getItem("username");
-  //   const limit = 50;
-  //   const messagesRequest = CometChat.MessagesRequest.MessagesRequestBuilder()
-  //     .set("unread", true)
-  //     .set("limit", limit)
-  //     .build();
-
-  //   messagesRequest.fetchPrevious((messages) => {
-  //     const unreadMessages = messages.filter(
-  //       (message) => message.unread
-  //     ).length;
-  //     setUnreadCount(unreadMessages);
-  //   });
-  // }, []);
   const value = {
     user,
     SendToMe,
-    unreadCount
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
