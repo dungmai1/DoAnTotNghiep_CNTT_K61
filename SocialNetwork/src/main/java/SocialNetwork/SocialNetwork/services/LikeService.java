@@ -11,4 +11,6 @@ public interface LikeService {
     int getAllLikesForPost(Integer postId);
 //    boolean unlike(Integer postId, User user);
     List<User> getAllUserLikePost(Integer postId);
+
+    Integer getAllLikes();
 }

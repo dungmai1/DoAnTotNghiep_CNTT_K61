@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 
 @RestController
 @RequestMapping("/user")
@@ -44,6 +44,24 @@ public class UserController {
             User user = userService.findUserByJwt(jwt);
             userService.updateUser(user,avatar);
             return new ResponseEntity<>(new ApiResponse(true,"Update User success"), HttpStatus.OK);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/banUser")
+    public ResponseEntity<ApiResponse> banUser(Integer UserId){
+        try{
+            userService.banUser(UserId);
+            return new ResponseEntity<>(new ApiResponse(true,"Ban User success"), HttpStatus.OK);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/unbanUser")
+    public ResponseEntity<ApiResponse> UnbanUser(Integer UserId){
+        try{
+            userService.UnbanUser(UserId);
+            return new ResponseEntity<>(new ApiResponse(true,"UnBan User success"), HttpStatus.OK);
         }catch (CustomException e){
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }

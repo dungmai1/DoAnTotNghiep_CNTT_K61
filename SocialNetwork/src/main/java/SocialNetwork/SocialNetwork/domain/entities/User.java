@@ -29,6 +29,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String phone;
     private String avatar;
+    private int status;
     @JsonIgnore
     private String password;
     @Enumerated(EnumType.STRING)

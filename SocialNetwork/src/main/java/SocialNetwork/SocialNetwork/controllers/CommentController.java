@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
@@ -56,5 +56,14 @@ public class CommentController {
     public List<Comment> getAllCommentForPost(Integer PostId){
         List<Comment> commentList = commentService.getAllCommentForPost(PostId);
         return commentList;
+    }
+    @GetMapping("/countAllComment")
+    public ResponseEntity countAllComment(){
+        try {
+            Integer countComment = commentService.countAllComment();
+            return ResponseEntity.ok(countComment);
+        } catch (CustomException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

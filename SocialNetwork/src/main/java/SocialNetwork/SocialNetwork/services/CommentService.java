@@ -12,4 +12,6 @@ public interface CommentService {
 
     void deleteComment(User user, Integer postId, Integer commentId);
     List<Comment> getAllCommentForPost(Integer PostID);
+
+    Integer countAllComment();
 }

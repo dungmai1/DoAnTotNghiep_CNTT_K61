@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import RelationshipService from "../../services/RelationshipService";
 import { Link } from "react-router-dom";
+import { Avatar, Card } from "@chakra-ui/react";
 
 export default function ListUser({ user,load,setload }) {
   const [checkfollow, setcheckfollow] = useState();
@@ -36,17 +37,17 @@ export default function ListUser({ user,load,setload }) {
   }, [load]);
 
   return (
-    <div class="card-body p-0">
+    <Card>
+    <div class="card-body p-2">
       <ul class="todo-task-lists m-0 p-0">
         <Link
           to={`/user/${user.usname}`}
           className="d-flex align-items-center p-1"
         >
           <div className="user-img img-fluid">
-            <img
+            <Avatar
               src={user.avatar}
               alt="story-img"
-              className="rounded-circle avatar-40"
             />
           </div>
           <div className="d-flex align-items-center justify-content-between w-100">
@@ -71,5 +72,6 @@ export default function ListUser({ user,load,setload }) {
         </Link>
       </ul>
     </div>
+    </Card>
   );
 }

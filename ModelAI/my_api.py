@@ -199,6 +199,26 @@ def extract_image_upload():
         return jsonify({"status": "success", "message": "Vectors extracted and saved successfully."})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
+    
+@app.route('/getImageDetect', methods=['GET'] )
+def getimageDetect():
+    try:
+        labels = request.args.get('labels') 
+        if not labels:
+            return jsonify({"status": "error", "message": "Labels parameter is missing"}), 400
+        
+        path_image_local = "save/static" + labels
+        p = Path(path_image_local)
+        image_paths = []
+        
+        for f in p.glob('*.jpg'):
+            image_path_full = str(f)
+            image_paths.append(image_path_full)
+            print(image_path_full)  
+            
+        return jsonify({"status": "success", "image_paths": image_paths})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}) 
 # Start Backend
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='6868')

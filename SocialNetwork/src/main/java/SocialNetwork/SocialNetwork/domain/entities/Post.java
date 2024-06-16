@@ -19,6 +19,7 @@ public class Post {
     @JsonIgnore
     private User user;
     private LocalDateTime PostTime;
+    private int status;
     private String ImageUrl;
     @OneToMany
     @JsonIgnore

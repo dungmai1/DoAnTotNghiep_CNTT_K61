@@ -37,6 +37,13 @@ public class SecurityConfiguration {
                                 "/post/GetAllPostByUsername/**",
                                 "/relationship/**"
                                     ).permitAll()
+                        .requestMatchers("/post/banPost",
+                                "/post/unbanPost",
+                                "/post/getAllPostBan",
+                                "/user/banUser",
+                                "/user/unbanUser",
+                                "/like/CountAllLike",
+                                "/comment/countAllComment").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
