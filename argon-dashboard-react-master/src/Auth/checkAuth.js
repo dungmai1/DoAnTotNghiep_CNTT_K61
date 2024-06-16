@@ -1,0 +1,29 @@
+import {jwtDecode} from "jwt-decode";
+
+const checkAuth = () => {
+  const token = localStorage.getItem("accessToken");
+
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const decoded = jwtDecode(token);
+
+    if (decoded.role !== "ROLE_ADMIN") {
+      return false;
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (decoded.exp < currentTime) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (error) {
+    return false;
+  }
+};
+
+export default checkAuth;
