@@ -79,4 +79,9 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentRepository.findAllByPost(post);
         return commentList;
     }
+
+    @Override
+    public Integer countAllComment() {
+        return this.commentRepository.findAll().size();
+    }
 }

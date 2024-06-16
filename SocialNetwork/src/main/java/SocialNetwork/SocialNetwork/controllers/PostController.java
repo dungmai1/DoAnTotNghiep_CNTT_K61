@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RestController
 @RequestMapping("/post")
 public class PostController {
@@ -60,7 +60,7 @@ public class PostController {
     @GetMapping("/GetAllPost")
     public List<PostServiceModel> getAllPost(@RequestHeader("Authorization") String jwt){
         User user = userService.findUserByJwt(jwt);
-        List<PostServiceModel> postServiceModelList = postService.getAllPosts(user);
+        List<PostServiceModel> postServiceModelList = postService.getAllPosts(user,1);
         return postServiceModelList;
     }
     @PostMapping("/Save")
@@ -92,6 +92,30 @@ public class PostController {
     @GetMapping("/GetAllPostByFollowing/{username}")
     public List<PostServiceModel> GetAllPostByFollowing(@PathVariable String username){
         List<PostServiceModel> postServiceModelList = postService.GetAllPostByFollowing(username);
+        return postServiceModelList;
+    }
+    @PutMapping("/banPost")
+    public ResponseEntity<ApiResponse> banPost(Integer postId){
+        try{
+            postService.BanPost(postId);
+            return new ResponseEntity<>(new ApiResponse(true, "Ban Post success"), HttpStatus.OK);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/unbanPost")
+    public ResponseEntity<ApiResponse> unbanPost(Integer postId){
+        try{
+            postService.unbanPost(postId);
+            return new ResponseEntity<>(new ApiResponse(true, "UnBan Post success"), HttpStatus.OK);
+        }catch (CustomException e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/getAllPostBan")
+    public List<PostServiceModel> getAllPostBan(@RequestHeader("Authorization") String jwt){
+        User user = userService.findUserByJwt(jwt);
+        List<PostServiceModel> postServiceModelList = postService.getAllPostBan(user,2);
         return postServiceModelList;
     }
 }

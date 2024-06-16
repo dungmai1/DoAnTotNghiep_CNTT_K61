@@ -43,6 +43,7 @@ public class PostServiceImpl implements PostService {
         postServiceModel.setUser(user);
         postServiceModel.setContent(postCreateBindingModel.getContent());
         postServiceModel.setImageUrl(postCreateBindingModel.getImageUrl());
+        postServiceModel.setStatus(1);
         postServiceModel.setPostTime(LocalDateTime.now());
         postServiceModel.setLikeList(new ArrayList<>());
         postServiceModel.setCommentList(new ArrayList<>());
@@ -52,7 +53,7 @@ public class PostServiceImpl implements PostService {
     }
     @Override
     public List<PostServiceModel> getAllPostsByUser(User user) {
-        List<Post> postList = postRepository.findAllByUser(user);
+        List<Post> postList = postRepository.findAllByUserAndStatus(user,1);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Post post : postList) {
             PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
@@ -76,8 +77,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostServiceModel> getAllPosts(User user) {
-        List<Post> postList = postRepository.findAll();
+    public List<PostServiceModel> getAllPosts(User user,Integer status) {
+        List<Post> postList = postRepository.findAllByStatus(status);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Post post : postList) {
             PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
@@ -119,7 +120,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostServiceModel> getAllPostsByUsername(String username) {
         User user = userRepository.findByUsname(username).orElse(null);
-        List<Post> postList = postRepository.findAllByUser(user);
+        List<Post> postList = postRepository.findAllByUserAndStatus(user,1);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Post post : postList) {
             PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
@@ -147,7 +148,7 @@ public class PostServiceImpl implements PostService {
         List<Relationship> relationshipList = relationshipRepository.findAllByUserOne(user);
         List<PostServiceModel> postServiceModels = new ArrayList<>();
         for (Relationship relationship : relationshipList) {
-            List<Post> postList = postRepository.findAllByUser(relationship.getUserTwo());
+            List<Post> postList = postRepository.findAllByUserAndStatus(relationship.getUserTwo(),1);
             for (Post post : postList) {
                 PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
                 postServiceModels.add(postServiceModel);
@@ -157,4 +158,34 @@ public class PostServiceImpl implements PostService {
         return postServiceModels;
     }
 
+    @Override
+    public void BanPost(Integer postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if(post==null){
+            throw new CustomException("Post not found");
+        }
+        post.setStatus(2);
+        postRepository.save(post);
+    }
+
+    @Override
+    public void unbanPost(Integer postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if(post==null){
+            throw new CustomException("Post not found");
+        }
+        post.setStatus(1);
+        postRepository.save(post);
+    }
+
+    @Override
+    public List<PostServiceModel> getAllPostBan(User user, Integer status) {
+        List<Post> postList = postRepository.findAllByStatus(status);
+        List<PostServiceModel> postServiceModels = new ArrayList<>();
+        for (Post post : postList) {
+            PostServiceModel postServiceModel = modelMapper.map(post, PostServiceModel.class);
+            postServiceModels.add(postServiceModel);
+        }
+        return postServiceModels;
+    }
 }

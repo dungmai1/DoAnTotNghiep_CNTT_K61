@@ -16,6 +16,7 @@ public class PostServiceModel {
     private String content;
     private LocalDateTime PostTime;
     private User user;
+    private int status;
     private String ImageUrl;
     private List<Like> likeList;
     private List<Comment> commentList;

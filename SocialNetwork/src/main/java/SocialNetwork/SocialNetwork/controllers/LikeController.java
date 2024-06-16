@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 
 @RestController
 @RequestMapping("/like")
@@ -55,5 +55,14 @@ public class LikeController {
     public List<User> getAllUserLikePost(Integer PostId){
         List<User> userList = likeService.getAllUserLikePost(PostId);
         return userList;
+    }
+    @GetMapping("/CountAllLike")
+    public ResponseEntity allLike() {
+        try {
+            Integer countLike = likeService.getAllLikes();
+            return ResponseEntity.ok(countLike);
+        } catch (CustomException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

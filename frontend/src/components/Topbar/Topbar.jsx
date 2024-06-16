@@ -7,7 +7,7 @@ import { CometChatUIKit } from "@cometchat/chat-uikit-react";
 import { IoExit } from "react-icons/io5";
 
 import logo from "../../logo.png"
-import { Center, Select } from "@chakra-ui/react";
+import { Avatar, Center, Select } from "@chakra-ui/react";
 
 export default function Topbar() {
   const handleSignOut = (e) => {
@@ -220,10 +220,11 @@ export default function Topbar() {
                   to={`/user/${username}`}
                   className="d-flex align-items-center dropdown-toggle"
                 >
-                  <img
+                  <Avatar
                     src={context.user ? context.user.avatar : ""}
-                    className="img-fluid rounded-circle me-3"
+                    // className="img-fluid rounded-circle me-3"
                     alt="user"
+                    marginRight="15px"
                   />
                   <div className="caption">
                     <h6 className="mb-0 line-height">

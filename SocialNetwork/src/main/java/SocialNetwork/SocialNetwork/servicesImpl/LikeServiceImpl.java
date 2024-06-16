@@ -80,4 +80,9 @@ public class LikeServiceImpl implements LikeService {
         }
         return users;
     }
+
+    @Override
+    public Integer getAllLikes() {
+        return this.likeRepository.findAll().size();
+    }
 }

@@ -13,7 +13,7 @@ public interface PostService {
     public boolean deletePost(User user,Integer PostId);
 
     PostServiceModel getSinglePost(User user, Integer postId);
-    public List<PostServiceModel> getAllPosts(User user);
+    public List<PostServiceModel> getAllPosts(User user,Integer status);
 
     public boolean savePost(User user, Integer postId);
     public List<PostServiceModel> GetAllSavedPost(User user);
@@ -23,4 +23,10 @@ public interface PostService {
     List<PostServiceModel> getAllPostsByImagePath(List<String> imagePaths);
 
     List<PostServiceModel> GetAllPostByFollowing(String username);
+
+    void BanPost(Integer postId);
+
+    void unbanPost(Integer postId);
+    public List<PostServiceModel> getAllPostBan(User user,Integer status);
+
 }

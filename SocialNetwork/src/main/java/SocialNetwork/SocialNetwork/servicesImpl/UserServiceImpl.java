@@ -62,4 +62,24 @@ public class UserServiceImpl implements UserService {
             throw new CustomException("User not exist with username "+user.getUsname());
         }
     }
+
+    @Override
+    public void banUser(Integer UserId) {
+        User user = userRepository.findById(UserId).orElse(null);
+        if(user==null) {
+            throw new CustomException("User not exist with username "+user.getUsname());
+        }
+        user.setStatus(2);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void UnbanUser(Integer UserId) {
+        User user = userRepository.findById(UserId).orElse(null);
+        if(user==null) {
+            throw new CustomException("User not exist with username "+user.getUsname());
+        }
+        user.setStatus(1);
+        userRepository.save(user);
+    }
 }

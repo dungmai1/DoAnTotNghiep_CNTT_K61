@@ -13,4 +13,8 @@ public interface UserService {
     List<User> getAllUser();
 
     void updateUser(User user, String avatar);
+
+    void banUser(Integer UserId);
+    void UnbanUser(Integer UserId);
+
 }

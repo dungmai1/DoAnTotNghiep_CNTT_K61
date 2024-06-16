@@ -3,23 +3,10 @@ import React from "react";
 export default function Home() {
   return (
     <>
-      <div className="header-for-bg">
-        <div className="background-header position-relative">
-          <img
-            src="../assets/images/page-img/profile-bg7.jpg"
-            className="img-fluid w-100"
-            alt="header-bg"
-          />
-          <div className="title-on-header">
-            <div className="data-block">
-              <h2>Groups</h2>
-            </div>
-          </div>
-        </div>
-      </div>
       <div id="content-page" className="content-page">
         <div className="container">
-          <div className="row">
+          <h1>hello</h1>
+          {/* <div className="row">
             <div className="col-lg-12">
               <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
                 <div className="group-info d-flex align-items-center">
@@ -1285,7 +1272,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
